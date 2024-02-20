@@ -10,6 +10,7 @@
 
 .user-section .dropdown-item:hover{
   color:blue;
+  background-color: white;
 }
 
 .user-section .dropdown-item:focus{
@@ -34,25 +35,25 @@
 
 /* LoginSignupPage css */
 .login-signup-form {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
-  .tabs button {
-    margin-right: 10px;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-  }
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  margin-right: 10px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
 
 /* Scroll Bar css  */
 .custom-scrollbar {
