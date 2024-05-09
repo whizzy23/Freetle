@@ -5,10 +5,10 @@ import Contact from "./components/Contact";
 import About from "./components/About";
 import SignUp from "./components/SignUp";
 import Profile from "./components/Profile"
-import { BrowserRouter , Routes , Route } from "react-router-dom";
-import "./custom.css"
 import Bookmark from "./components/Bookmark";
 import PublishedStories from "./components/PublishedStories";
+import { BrowserRouter , Routes , Route } from "react-router-dom";
+import "./custom.css"
 
 function App() {
   return (
@@ -23,6 +23,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/bookmarks" element={<Bookmark />} />
           <Route path="/publications" element={<PublishedStories />} />
+          
         </Routes>
       </div>
     </BrowserRouter>
