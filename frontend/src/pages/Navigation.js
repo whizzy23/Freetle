@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import {useState} from "react";
 import { NavLink } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.css';
 import {Image,Navbar,Nav,Container,NavDropdown} from 'react-bootstrap';
@@ -17,13 +17,9 @@ const Navigation = () => {
     document.body.classList.remove('navbar-expanded');
 };
 
-const handleNavbarExpand = () => {
-    document.body.classList.add('navbar-expanded');
-};
-
   return(
     <>
-      <Navbar expand="md" className="border-bottom border-1 border-dark" expanded={expanded} onToggle={handleToggle} onEntered={handleNavbarExpand} onExit={handleNavbarCollapse} >
+      <Navbar expand="md" className="border-bottom border-1 border-dark" expanded={expanded} onToggle={handleToggle}  >
         <Container className="pt-2">
           <Navbar.Brand href="/"><Image src={logo} fluid width={150} /></Navbar.Brand>
           <Navbar.Toggle aria-controls="mainNav" />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Container, Row, Col, Card, Button, Image, Modal, Form } from 'react-bootstrap';
 
 const Profile = () => {

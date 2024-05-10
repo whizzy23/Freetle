@@ -1,4 +1,3 @@
-import React from 'react';
 import { Container, Row, Col, Image } from 'react-bootstrap';
 import member1 from '../assets/member1.png';
 

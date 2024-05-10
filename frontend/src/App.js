@@ -1,12 +1,12 @@
 import React from "react";
-import Navigation from "./components/Navigation";
-import Home from "./components/Home";
-import Contact from "./components/Contact";
-import About from "./components/About";
-import SignUp from "./components/SignUp";
-import Profile from "./components/Profile"
-import Bookmark from "./components/Bookmark";
-import PublishedStories from "./components/PublishedStories";
+import Navigation from "./pages/Navigation";
+import Home from "./pages/Home";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import SignUp from "./pages/SignUp";
+import Profile from "./pages/Profile"
+import Bookmark from "./pages/Bookmark";
+import PublishedStories from "./pages/PublishedStories";
 import { BrowserRouter , Routes , Route } from "react-router-dom";
 import "./custom.css"
 
