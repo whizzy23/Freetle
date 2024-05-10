@@ -31,8 +31,8 @@ const Home = () => {
             <Container className='py-5'>
                 <Row xs={1} sm={2} md={3} lg={4} className="g-4">
                     {stories && stories.slice(0, visibleStories).map(story => (
-                        <Col key={story.id}>
-                            <a href={`/story/${story.id}`} className="card-link">
+                        <Col key={story._id}>
+                            <a href={`/story/${story._id}`} className="card-link">
                                 <StoryCardsDetails story={story} key={story._id} />
                             </a>
                         </Col>

@@ -7,6 +7,7 @@ import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile"
 import Bookmark from "./pages/Bookmark";
 import PublishedStories from "./pages/PublishedStories";
+import StoryPage from "./pages/StoryPage";
 import { BrowserRouter , Routes , Route } from "react-router-dom";
 import "./custom.css"
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/bookmarks" element={<Bookmark />} />
           <Route path="/publications" element={<PublishedStories />} />
+          <Route path="/story/:id" element={<StoryPage />} />
           
         </Routes>
       </div>

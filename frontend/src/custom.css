@@ -74,3 +74,8 @@
   background-color: #555; /* Change the color of the scrollbar thumb on hover */
 }
 
+/* StoryPage css */
+.story-card {
+  width: 90%;
+  box-shadow: 0 8px 16px rgba(0, 0, 255, 0.351);
+}
