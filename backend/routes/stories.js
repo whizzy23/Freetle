@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { stories_index , story_details , story_create_get , story_create_post , story_delete , story_update } = require('../controller/storyController')
+const { stories_index , story_details , story_create_post , story_delete , story_update } = require('../controller/storyController')
 
 // GET all stories
 router.get('/', stories_index)

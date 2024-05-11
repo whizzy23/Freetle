@@ -1,5 +1,6 @@
 require('dotenv').config()
 storiesRoutes = require('./routes/stories')
+contactRoutes = require('./routes/contact')
 
 const express = require('express')
 const mongoose = require('mongoose')
@@ -24,10 +25,13 @@ app.use((req, res, next) => {
   next()
 })
 
-//routes
+// routes
 app.get('/',(req,res) => {
     res.redirect('/api/stories')
 })
 
-//workout routes
+// stories routes
 app.use('/api/stories',storiesRoutes)
+
+// contact message routes
+app.use('/api/contact',contactRoutes)

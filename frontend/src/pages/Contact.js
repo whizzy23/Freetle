@@ -2,19 +2,36 @@ import { useState } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 
 const Contact = () => {
-  const [messageData,setMessageData] = useState({ name: '', email: '' ,message: '' });
+  const [messageData,setMessageData] = useState({ userName: '' , userEmail: '' , userMessage: '' });
+  const [emptyFields,setEmptyFields] = useState([]);
+  const [error,setError] = useState(null)
 
   const handleMessageInputChange = (e) => {
-    const { name, value } = e.target;
-    // To implement message ref code
+    const { name , value } = e.target;
     setMessageData({ ...messageData, [name]: value });
   };
 
-  const handleMessageSubmit = (e) => {
+  const handleMessageSubmit = async (e) => {
     e.preventDefault();
-    // To implement message ref code
-    console.log('Message submitted:', messageData);
-    setMessageData({ ...messageData, name:'' , email:'' , message:'' });
+    console.log(messageData)
+    const response = await fetch('/api/contact/sendMessage' , {
+        method:"POST",
+        body:JSON.stringify(messageData),
+        headers:{ 'Content-Type' : 'application/json' }
+    })
+    const json = await response.json()
+    
+    if (!response.ok) {
+        setError(json.error)
+        setEmptyFields(json.emptyFields)
+        console.log(json)
+    }
+    else{
+        setError(null)
+        setEmptyFields([])
+        setMessageData({ ...messageData, userName:'' , userEmail:'' , userMessage:'' });
+    }
+
   };
   
   return (
@@ -24,19 +41,20 @@ const Contact = () => {
           <Col md={6}>
             <h2 className="text-center mb-4">Contact Us</h2>
             <Form onSubmit={handleMessageSubmit}>
-              <Form.Group controlId="user_Name" className="my-2">
+              <Form.Group controlId="user_Name" className="my-3">
                 <Form.Label>Name</Form.Label>
-                <Form.Control type="text" name="name" placeholder="Enter your name" onChange={handleMessageInputChange} value={messageData.name} required />
+                <Form.Control type="text" name="userName" placeholder="Enter your name" className={emptyFields.includes('userName') ? 'emptyFieldError' : '' } onChange={handleMessageInputChange} value={messageData.userName} />
               </Form.Group>
-              <Form.Group controlId="user_Email" className="my-2">
+              <Form.Group controlId="user_Email" className="my-3">
                 <Form.Label>Email address</Form.Label>
-                <Form.Control type="email" name="email" placeholder="Enter your email" onChange={handleMessageInputChange} value={messageData.email} required />
+                <Form.Control type="email" name="userEmail" placeholder="Enter your email" className={emptyFields.includes('userEmail') ? 'emptyFieldError' : '' } onChange={handleMessageInputChange} value={messageData.userEmail} />
               </Form.Group>
-              <Form.Group controlId="user_Message" className="my-2">
+              <Form.Group controlId="user_Message" className="my-3">
                 <Form.Label>Message</Form.Label>
-                <Form.Control as="textarea" rows={5} name="message" placeholder="Enter your message" onChange={handleMessageInputChange} value={messageData.message} required />
+                <Form.Control as="textarea" rows={5} name="userMessage" placeholder="Enter your message" className={emptyFields.includes('userMessage') ? 'emptyFieldError' : '' } onChange={handleMessageInputChange} value={messageData.userMessage} />
               </Form.Group>
               <Button variant="dark" type="submit">Submit</Button>
+              {error && <div className="dispEmptyError">{error}</div>}
             </Form>
           </Col>
         </Row>

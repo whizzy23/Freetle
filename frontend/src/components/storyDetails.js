@@ -1,4 +1,4 @@
-import { Card, CardFooter } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../custom.css';
 

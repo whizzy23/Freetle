@@ -24,10 +24,6 @@ const story_details = async (req,res) => {
 }
 
 //CREATE STORY
-const story_create_get = (req,res) => {
-    res.json({mssg: 'Create story'})
-}
-
 const story_create_post = async (req, res) => {
     // const {title,description,content,author} = req.body
     try{
@@ -63,4 +59,4 @@ const story_update = async (req,res) => {
     }
 }
 
-module.exports = { stories_index , story_details , story_create_get , story_create_post  , story_delete , story_update }
+module.exports = { stories_index , story_details , story_create_post  , story_delete , story_update }

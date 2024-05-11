@@ -79,3 +79,17 @@
   width: 90%;
   box-shadow: 0 8px 16px rgba(0, 0, 255, 0.351);
 }
+
+/* Field error css */
+.emptyFieldError {
+  border: 1px solid rgb(255, 76, 76);
+}
+
+.dispEmptyError {
+  padding: 10px;
+  background: #ffefef;
+  border: 1px solid rgb(255, 76, 76);
+  color: rgb(255, 0, 0);
+  border-radius: 4px;
+  margin: 10px 0;
+}
