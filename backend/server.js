@@ -1,6 +1,7 @@
 require('dotenv').config()
 storiesRoutes = require('./routes/stories')
 contactRoutes = require('./routes/contact')
+bookmarkRoutes = require('./routes/bookmark')
 
 const express = require('express')
 const mongoose = require('mongoose')
@@ -35,3 +36,6 @@ app.use('/api/stories',storiesRoutes)
 
 // contact message routes
 app.use('/api/contact',contactRoutes)
+
+// boookmark routes
+app.use('/api/bookmarks',bookmarkRoutes)

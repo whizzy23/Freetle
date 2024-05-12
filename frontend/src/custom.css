@@ -93,3 +93,12 @@
   border-radius: 4px;
   margin: 10px 0;
 }
+
+/* bookmark icon css */
+.bookmark{
+  transition: transform 0.3s ease;
+}
+
+.bookmark:hover {
+  transform: translateY(5px);
+}
