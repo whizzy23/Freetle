@@ -1,20 +1,23 @@
-import { useState , useEffect } from 'react';
+import { useEffect } from 'react';
 import { Container, Row, Col, Alert } from 'react-bootstrap';
+import { useBookmarkContext } from '../hooks/useBookmarkContext';
+
+//components
 import BookmarkCards from '../components/bookmarkCards';
 
 const BookmarkPage = () => {
-  const [bookmarks, setBookmarks] = useState([]);
+  const { dispatchBookmark,bookmarks } = useBookmarkContext();
 
   useEffect(() => {
     const fetchBookmarks = async () => {
       const response = await fetch('/api/bookmarks');
       const json = await response.json();
       if(response.ok) {
-        setBookmarks(json);
+        dispatchBookmark({ type: 'SET_BOOKMARKS', payload: json });
       }
     };
     fetchBookmarks();
-    }, []);
+  }, [dispatchBookmark]);
 
   return (
     <Container className="pt-5 pb-5">
@@ -26,7 +29,7 @@ const BookmarkPage = () => {
           ) : (
             <Row xs={1} md={2} lg={3} className="g-4">
               {bookmarks.map(bookmark => (
-                <Col key={bookmark.bookmarkStory._id}>
+                <Col key={bookmark._id}>
                   <a href={`/story/${bookmark.bookmarkStory._id}`} className="card-link">
                     <BookmarkCards story={bookmark.bookmarkStory} key={bookmark.bookmarkStory._id} />
                   </a>

@@ -1,6 +1,9 @@
 import { Card , Button } from 'react-bootstrap'
+import { useBookmarkContext } from '../hooks/useBookmarkContext'
 
 const BookmarkCards = ({story}) => {
+
+    const { dispatchBookmark } = useBookmarkContext()
   
     const deleteBookmark = async (e) => {
         e.preventDefault()
@@ -14,7 +17,8 @@ const BookmarkCards = ({story}) => {
             console.log(json.error)
         }
         else{
-            // dispatch({ type: 'DELETE_WORKOUT', payload: json })
+            dispatchBookmark({ type: 'DELETE_BOOKMARK', payload: json })
+            dispatchBookmark({ type: 'SET_BOOKMARKS', payload: await fetch('/api/bookmarks').then(res => res.json()) }); // Update bookmarks so that globally bookmarked stories are updated
             console.log('Bookmark Removed' , json)
         }
     }

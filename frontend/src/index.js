@@ -3,11 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { BookmarkContextProvider } from './context/BookmarkContext';
+import { StoriesContextProvider } from './context/StoriesContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <BookmarkContextProvider>
+      <StoriesContextProvider>
+        <App />
+      </StoriesContextProvider>
+    </BookmarkContextProvider>
   </React.StrictMode>
 );
 

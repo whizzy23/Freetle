@@ -21,11 +21,11 @@ const Navigation = () => {
     <>
       <Navbar expand="md" className="border-bottom border-1 border-dark" expanded={expanded} onToggle={handleToggle}  >
         <Container className="pt-2">
-          <Navbar.Brand href="/"><Image src={logo} fluid width={150} /></Navbar.Brand>
+          <Navbar.Brand as={NavLink} to="/" ><Image src={logo} fluid width={150} /></Navbar.Brand>
           <Navbar.Toggle aria-controls="mainNav" />
           <Navbar.Collapse id="mainNav" className="justify-content-end">
           <Nav className="align-items-center fw-bold">
-            <Nav.Link className="mx-3"  onClick={handleNavbarCollapse} as={NavLink} to="/">Home</Nav.Link>  
+            <Nav.Link className="mx-3"  onClick={handleNavbarCollapse} as={NavLink} to="/" >Home</Nav.Link>  
             <Nav.Link className="d-md-none d-sm-flex"  onClick={handleNavbarCollapse} as={NavLink} to="/profile">Profile</Nav.Link>
             <Nav.Link className="mx-3"  onClick={handleNavbarCollapse} as={NavLink} to="about">About</Nav.Link> 
             <Nav.Link className="mx-3"  onClick={handleNavbarCollapse} as={NavLink} to="contact">Contact</Nav.Link>

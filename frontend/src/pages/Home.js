@@ -1,42 +1,51 @@
-import React, { useEffect , useState } from 'react';
+import { useEffect , useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
+import { useStoriesContext } from '../hooks/useStoriesContext';
+import { useBookmarkContext } from '../hooks/useBookmarkContext';
 
 // components
 import StoryCardsDetails from "../components/storyCardsDetails"
 
 const Home = () => {
 
-  const [stories, setStories] = useState([]);
+  const {dispatchBookmark} = useBookmarkContext();
+
+  const {stories,dispatchStory} = useStoriesContext();
 
   const [visibleStories, setVisibleStories] = useState(16); // Show 16 stories initially
-
-  const [bookmarkIds, setBookmarkIds] = useState([]);
 
   const loadMoreStories = () => {
     setVisibleStories(prevVisibleStories => prevVisibleStories + 20); // Load 20 more stories
   };
 
   useEffect(() => {
-  const fetchStories = async () => {
-    const response = await fetch('/api/stories');
-    const json = await response.json();
-    if(response.ok) {
-      setStories(json);
-    }
-  };
-  fetchStories();
-  }, []);
+    const fetchBookmarksAndStories = async () => {
+      try {
+        const bookmarksResponse = await fetch('/api/bookmarks');
+        const bookmarksJson = await bookmarksResponse.json();
+        if (bookmarksResponse.ok) {
+          dispatchBookmark({ type: 'SET_BOOKMARKS', payload: bookmarksJson });
 
-  useEffect(() => {
-    const fetchBookmarks = async () => {
-      const response = await fetch('/api/bookmarks');
-      const json = await response.json();
-      if(response.ok) {
-        setBookmarkIds(json.map(bookmark => bookmark.bookmarkStory._id));
+          const storiesResponse = await fetch('/api/stories');
+          const storiesJson = await storiesResponse.json();
+          if (storiesResponse.ok) {
+            dispatchStory({ type: 'SET_STORIES', payload: storiesJson });
+          } 
+          else {
+            console.error('Error fetching stories:', storiesJson);
+          }
+        } 
+        else {
+          console.error('Error fetching bookmarks:', bookmarksJson);
+        }
+      } 
+      catch (error) {
+        console.error('Fetch error:', error);
       }
     };
-    fetchBookmarks();
-    }, []);
+
+    fetchBookmarksAndStories();
+  }, [dispatchBookmark, dispatchStory]);
 
   return (
     <div className="home">
@@ -46,7 +55,7 @@ const Home = () => {
                     {stories && stories.slice(0, visibleStories).map(story => (
                         <Col key={story._id}>
                             <a href={`/story/${story._id}`} className="card-link">
-                                <StoryCardsDetails story={story} key={story._id} bookmarkIds={bookmarkIds} />
+                                <StoryCardsDetails story={story} key={story._id}  />
                             </a>
                         </Col>
                     ))}
