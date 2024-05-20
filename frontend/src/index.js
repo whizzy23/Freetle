@@ -5,15 +5,18 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BookmarkContextProvider } from './context/BookmarkContext';
 import { StoriesContextProvider } from './context/StoriesContext';
+import { AuthContextProvider } from './context/AuthContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BookmarkContextProvider>
-      <StoriesContextProvider>
-        <App />
-      </StoriesContextProvider>
-    </BookmarkContextProvider>
+    <AuthContextProvider>
+      <BookmarkContextProvider>
+        <StoriesContextProvider>
+          <App />
+        </StoriesContextProvider>
+      </BookmarkContextProvider>
+    </AuthContextProvider>
   </React.StrictMode>
 );
 

@@ -2,11 +2,15 @@ import { useEffect , useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { useStoriesContext } from '../hooks/useStoriesContext';
 import { useBookmarkContext } from '../hooks/useBookmarkContext';
+import { useAuthContext } from '../hooks/useAuthContext';
+import { Link } from 'react-router-dom';
 
 // components
 import StoryCardsDetails from "../components/storyCardsDetails"
 
 const Home = () => {
+
+  const {user} = useAuthContext();
 
   const {dispatchBookmark} = useBookmarkContext();
 
@@ -21,12 +25,14 @@ const Home = () => {
   useEffect(() => {
     const fetchBookmarksAndStories = async () => {
       try {
-        const bookmarksResponse = await fetch('/api/bookmarks');
+        const bookmarksResponse = await fetch('/api/bookmarks', {
+        headers: {'Authorization': `Bearer ${user.token}`},})
         const bookmarksJson = await bookmarksResponse.json();
         if (bookmarksResponse.ok) {
           dispatchBookmark({ type: 'SET_BOOKMARKS', payload: bookmarksJson });
 
-          const storiesResponse = await fetch('/api/stories');
+          const storiesResponse = await fetch('/api/stories' , {
+            headers: {'Authorization': `Bearer ${user.token}`},});
           const storiesJson = await storiesResponse.json();
           if (storiesResponse.ok) {
             dispatchStory({ type: 'SET_STORIES', payload: storiesJson });
@@ -43,9 +49,11 @@ const Home = () => {
         console.error('Fetch error:', error);
       }
     };
-
-    fetchBookmarksAndStories();
-  }, [dispatchBookmark, dispatchStory]);
+  
+    if (user){
+      fetchBookmarksAndStories();
+    }
+  }, [dispatchBookmark, dispatchStory,user]);
 
   return (
     <div className="home">
@@ -54,9 +62,9 @@ const Home = () => {
                 <Row xs={1} sm={2} md={3} lg={4} className="g-4">
                     {stories && stories.slice(0, visibleStories).map(story => (
                         <Col key={story._id}>
-                            <a href={`/story/${story._id}`} className="card-link">
+                            <Link to={`/story/${story._id}`} className="card-link">
                                 <StoryCardsDetails story={story} key={story._id}  />
-                            </a>
+                            </Link>
                         </Col>
                     ))}
                 </Row>

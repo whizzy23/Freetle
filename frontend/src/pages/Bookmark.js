@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { Container, Row, Col, Alert } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { useBookmarkContext } from '../hooks/useBookmarkContext';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 //components
 import BookmarkCards from '../components/bookmarkCards';
@@ -8,16 +10,21 @@ import BookmarkCards from '../components/bookmarkCards';
 const BookmarkPage = () => {
   const { dispatchBookmark,bookmarks } = useBookmarkContext();
 
+  const { user } = useAuthContext();
+
   useEffect(() => {
     const fetchBookmarks = async () => {
-      const response = await fetch('/api/bookmarks');
+      const response = await fetch('/api/bookmarks' ,{
+        headers: {'Authorization': `Bearer ${user.token}`},});
       const json = await response.json();
       if(response.ok) {
         dispatchBookmark({ type: 'SET_BOOKMARKS', payload: json });
       }
     };
-    fetchBookmarks();
-  }, [dispatchBookmark]);
+    if (user){
+      fetchBookmarks();
+    }
+  }, [dispatchBookmark,user]);
 
   return (
     <Container className="pt-5 pb-5">
@@ -30,9 +37,9 @@ const BookmarkPage = () => {
             <Row xs={1} md={2} lg={3} className="g-4">
               {bookmarks.map(bookmark => (
                 <Col key={bookmark._id}>
-                  <a href={`/story/${bookmark.bookmarkStory._id}`} className="card-link">
+                  <Link to={`/story/${bookmark.bookmarkStory._id}`} className="card-link">
                     <BookmarkCards story={bookmark.bookmarkStory} key={bookmark.bookmarkStory._id} />
-                  </a>
+                  </Link>
                 </Col>
               ))}
             </Row>

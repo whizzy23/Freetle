@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const Contact = () => {
   const [messageData,setMessageData] = useState({ userName: '' , userEmail: '' , userMessage: '' });
   const [emptyFields,setEmptyFields] = useState([]);
   const [error,setError] = useState(null)
+  const { user } = useAuthContext()
 
   const handleMessageInputChange = (e) => {
     const { name , value } = e.target;
@@ -13,18 +15,16 @@ const Contact = () => {
 
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
-    console.log(messageData)
     const response = await fetch('/api/contact/sendMessage' , {
         method:"POST",
         body:JSON.stringify(messageData),
-        headers:{ 'Content-Type' : 'application/json' }
+        headers:{ 'Content-Type' : 'application/json' , 'Authorization' : `Bearer ${user.token}`}
     })
     const json = await response.json()
     
     if (!response.ok) {
         setError(json.error)
         setEmptyFields(json.emptyFields)
-        console.log(json)
     }
     else{
         setError(null)

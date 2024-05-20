@@ -42,7 +42,8 @@ const message_create_post = async (req, res) => {
     }
 
     try{
-      const message = await Message.create(req.body)
+      const user_id = req.user._id
+      const message = await Message.create({...req.body, user_id})
       res.status(200).json(message)
     }
     catch(error){

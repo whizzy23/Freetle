@@ -13,7 +13,12 @@ const messageSchema = new Schema({
     userMessage:{
         type:String,
         required:true
-    }  
+    },
+    user_id:{
+        type:String,
+        ref:'User',
+        required:true
+    }
 }, {timestamps:true} )
 
 const Message = mongoose.model('Message',messageSchema)

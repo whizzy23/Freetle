@@ -2,8 +2,9 @@ const Bookmark = require('../models/bookmarkModel');
 
 //GET ALL BOOKMARKS
 const bookmarks_index = async (req,res) => {
+    const user_id = req.user._id
     try{
-        const bookmarks = await Bookmark.find().populate('bookmarkStory')
+        const bookmarks = await Bookmark.find({user_id}).populate('bookmarkStory')
         res.status(200).json(bookmarks)
     }
     catch(error){
@@ -13,8 +14,9 @@ const bookmarks_index = async (req,res) => {
 
 //ADD A NEW BOOKMARK
 const add_bookmark = async (req,res) => {
+    const user_id = req.user._id
     try{
-        const bookmark = await Bookmark.create(req.body)
+        const bookmark = await Bookmark.create({ ...req.body, user_id})
         res.status(200).json(bookmark)
     }
     catch(error){
@@ -24,9 +26,10 @@ const add_bookmark = async (req,res) => {
 
 //DELETE A BOOKMARK
 const delete_bookmark = async (req,res) => {
+    const user_id = req.user._id
     try{
         const id = req.params.id
-        const bookmark = await Bookmark.findOneAndDelete({ bookmarkStory: id })
+        const bookmark = await Bookmark.findOneAndDelete({ bookmarkStory: id , user_id })
         res.status(200).json(bookmark)
     }
     catch(error){

@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useSignup } from '../hooks/useSignup';
+import { useLogin } from '../hooks/useLogin';
 
 const SignUp = () => {
+  const {signup, error: signupError , isLoading: isSignupLoading } = useSignup();
+  const {login, error: loginError, isLoading: isLoginLoading} = useLogin();
   const [loginFormData, setLoginFormData] = useState({ email: '', password: '' });
   const [signupFormData, setSignupFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
-  const [activeTab, setActiveTab] = useState('login');
-  const [loginFormError, setLoginFormError] = useState('');
-  const [signupFormError, setSignupFormError] = useState('');
+  const [activeTab, setActiveTab] = useState('login')
 
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
@@ -21,39 +23,18 @@ const SignUp = () => {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    // Clear form error when switching tabs
-    if (tab === 'login') {
-      setSignupFormError('');
-    }
-    else {
-      setLoginFormError('');
-    }
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    if (!loginFormData.email.trim() || !loginFormData.password.trim()) {
-      setLoginFormError('All fields are required');
-      return;
-    }
-    // To implement login ref code
-    console.log('Login form submitted:', loginFormData);
-    setLoginFormData({ email: '', password: '' });
-    // Clear form error after successful submission
-    setLoginFormError('');
+    const { email, password } = loginFormData;
+    await login(email, password);
   };
 
-  const handleSignupSubmit = (e) => {
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    if (!signupFormData.name || !signupFormData.email || !signupFormData.password || !signupFormData.confirmPassword) {
-      setSignupFormError('All fields are required.');
-      return;
-    }
-    // To implement signup ref code
-    console.log('Signup form submitted:', signupFormData);
-    setSignupFormData({ name: '', email: '', password: '', confirmPassword: '' });
-    // Clear form error after successful submission
-    setSignupFormError('');
+    const {name,email,password,confirmPassword}=signupFormData;
+    await signup(name, email, password,confirmPassword);
   };
 
   return (
@@ -75,14 +56,14 @@ const SignUp = () => {
                   <Form.Label>Password</Form.Label>
                   <Form.Control type="password" name="password" value={loginFormData.password} onChange={handleLoginInputChange} placeholder="Password" />
                 </Form.Group>
-                {loginFormError && <Alert variant="danger">{loginFormError}</Alert>}
-                <Button variant="dark" type="submit" className='mt-2'>Login</Button>
+                {loginError && <Alert variant="danger">{loginError}</Alert>}
+                <Button disabled={isLoginLoading} variant="dark" type="submit" className='mt-2'>Login</Button>
               </Form>
             ) : (
               <Form onSubmit={handleSignupSubmit}>
                 <Form.Group controlId="signupFormName" className='my-2'>
                   <Form.Label>Name</Form.Label>
-                  <Form.Control type="text" name="name" value={signupFormData.name} onChange={handleSignupInputChange} placeholder="Enter Name" />
+                  <Form.Control type="text" name="name" value={signupFormData.name} onChange={handleSignupInputChange} placeholder="Enter name" />
                 </Form.Group>
                 <Form.Group controlId="signupFormEmail" className='my-2'>
                   <Form.Label>Email address</Form.Label>
@@ -90,14 +71,14 @@ const SignUp = () => {
                 </Form.Group>
                 <Form.Group controlId="signupFormPassword" className='my-2'>
                   <Form.Label>Password</Form.Label>
-                  <Form.Control type="password" name="password" value={signupFormData.password} onChange={handleSignupInputChange} placeholder="Password" />
+                  <Form.Control type="password" name="password" value={signupFormData.password} onChange={handleSignupInputChange} placeholder="Enter password" />
                 </Form.Group>
                 <Form.Group controlId="signupFormConfirmPassword" className='my-2'>
                   <Form.Label>Confirm Password</Form.Label>
                   <Form.Control type="password" name="confirmPassword" value={signupFormData.confirmPassword} onChange={handleSignupInputChange} placeholder="Confirm Password" />
                 </Form.Group>
-                {signupFormError && <Alert variant="danger">{signupFormError}</Alert>}
-                <Button variant="dark" type="submit" className='mt-2'>Signup</Button>
+                {signupError && <Alert variant="danger">{signupError}</Alert>}
+                <Button disabled={isSignupLoading} variant="dark" type="submit" className='mt-2'>Signup</Button>
               </Form>
             )}
           </div>

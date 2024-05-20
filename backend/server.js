@@ -1,7 +1,8 @@
 require('dotenv').config()
-storiesRoutes = require('./routes/stories')
-contactRoutes = require('./routes/contact')
-bookmarkRoutes = require('./routes/bookmark')
+const storiesRoutes = require('./routes/stories')
+const contactRoutes = require('./routes/contact')
+const bookmarkRoutes = require('./routes/bookmark')
+const userRoutes = require('./routes/user')
 
 const express = require('express')
 const mongoose = require('mongoose')
@@ -30,6 +31,8 @@ app.use((req, res, next) => {
 app.get('/',(req,res) => {
     res.redirect('/api/stories')
 })
+
+app.use('/api/user', userRoutes)
 
 // stories routes
 app.use('/api/stories',storiesRoutes)

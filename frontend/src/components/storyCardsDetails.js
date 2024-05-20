@@ -1,21 +1,26 @@
 import { Card } from 'react-bootstrap';
-import { useBookmarkContext } from '../hooks/useBookmarkContext';
 import { useState } from 'react';
+import { useBookmarkContext } from '../hooks/useBookmarkContext';
+import { useAuthContext } from '../hooks/useAuthContext';
 import bookmark from '../assets/bookmark.svg';
 import bookmarkFilled from '../assets/bookmarkfilled.svg';
 
 const StoryCardsDetails = ({ story }) => {
   const { bookmarkIds, dispatchBookmark } = useBookmarkContext();
   const [isBookmarked, setIsBookmarked] = useState(bookmarkIds.includes(story._id));
-  
+  const { user } = useAuthContext();
+
   const handleBookmarkClick = async (e) => {
     e.preventDefault();
     try {
       const response = isBookmarked
-        ? await fetch(`/api/bookmarks/${story._id}`, { method: 'DELETE' })
+        ? await fetch(`/api/bookmarks/${story._id}`, {
+            method: 'DELETE' ,
+            headers: {'Authorization': `Bearer ${user.token}`} 
+          })
         : await fetch('/api/bookmarks/add', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${user.token}` },
             body: JSON.stringify({ bookmarkStory: story._id }),
           });
 
@@ -23,6 +28,10 @@ const StoryCardsDetails = ({ story }) => {
       if (!response.ok) throw new Error(json.error);
       
       dispatchBookmark({ type: isBookmarked ? 'DELETE_BOOKMARK' : 'ADD_BOOKMARK', payload: json });
+      dispatchBookmark({ type: 'SET_BOOKMARKS', payload: await fetch('/api/bookmarks',{           //updating bookmark status
+        headers: {'Authorization': `Bearer ${user.token}`},})
+        .then(res => res.json()) 
+      });
       setIsBookmarked(!isBookmarked); 
     } catch (error) {
       console.error(`Error ${isBookmarked ? 'removing' : 'adding'} bookmark:`, error.message);

@@ -6,12 +6,12 @@ const bookmarkSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Story',
     required: true
+  },
+  user_id: {
+    type: String,
+    ref: 'User',
+    required: true
   }
-//   userId: {
-//     type: Schema.Types.ObjectId,
-//     ref: 'User',
-//     required: true
-//   }
 });
 
 const Bookmark = mongoose.model('Bookmark', bookmarkSchema);
