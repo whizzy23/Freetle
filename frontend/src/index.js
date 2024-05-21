@@ -6,16 +6,19 @@ import reportWebVitals from './reportWebVitals';
 import { BookmarkContextProvider } from './context/BookmarkContext';
 import { StoriesContextProvider } from './context/StoriesContext';
 import { AuthContextProvider } from './context/AuthContext';
+import { UserContextProvider } from './context/UserContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AuthContextProvider>
-      <BookmarkContextProvider>
-        <StoriesContextProvider>
-          <App />
-        </StoriesContextProvider>
-      </BookmarkContextProvider>
+      <UserContextProvider>
+        <BookmarkContextProvider>
+          <StoriesContextProvider>
+            <App />
+          </StoriesContextProvider>
+        </BookmarkContextProvider>
+      </UserContextProvider>
     </AuthContextProvider>
   </React.StrictMode>
 );

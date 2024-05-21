@@ -1,45 +1,76 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button, Image, Modal, Form } from 'react-bootstrap';
+import { useUserContext } from '../hooks/useUserContext';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const Profile = () => {
-  const [showModal , setShowModal] = useState(false);
-  const [userData  , setUserData] = useState({name:'',penName:'',bio:''});
+  const [showModal , setShowModal] = useState(false)
+  const [userDetails , setUserDetails] = useState({ name:'', penName:'', bio:'' });
   const [nameError , setNameError] = useState('');
-  const [penNameError , setPenNameError] = useState('');
+  const { userData , dispatchUser } = useUserContext();
+  const { user } = useAuthContext();
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setNameError(''); // Clear any previous error message when modal is closed
+  const handleCloseModal = () => setShowModal(false);
+  
+  const handleShowModal = () => {
+    setShowModal(true);
+    setUserDetails(userData);
+    setNameError('');
   }
-
-  const handleShowModal = () => setShowModal(true);
 
   const handleInputChanges = (e) => {
     const { name, value } = e.target;
-    setUserData({ ...userData , [name]: value });
+    setUserDetails({ ...userDetails , [name]: value });
   }
 
-  const handleSaveChanges = (e) => {
+  const handleSaveChanges = async (e) => {
     e.preventDefault();
-    if (!userData.name.trim() && !userData.penName.trim()) {
+    if (!userDetails.name.trim()) {
       setNameError('Please enter your name');
-      setPenNameError('Please enter your pen name')
-    }
-    else if (!userData.name.trim()) {
-      setNameError('Please enter your name');
-      setPenNameError('')
-    }
-    else if (!userData.penName.trim() ) {
-      setPenNameError('Please enter your pen name');
-      setNameError('')
     }
     else{
-      console.log("Changes submitted:",userData);
-      setNameError('')
-      setPenNameError('')
-      handleCloseModal();
+      const response = await fetch('/api/user/update', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify(userDetails)
+      });
+
+      const json = await response.json();
+      
+      if (!response.ok) {
+        console.error('Error updating user profile:', json.error);
+      }
+      else {
+        dispatchUser({ type: 'UPDATE_USER', payload: json });
+        dispatchUser({ type: 'SET_USER', payload: json });
+        setNameError('')
+        handleCloseModal();
+      }
     }
-  };
+  }
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await fetch('/api/user/details', {
+          headers: { 'Authorization': `Bearer ${user.token}` },
+        });
+        const json = await response.json();
+        if (!response.ok) throw new Error(json.error);
+        dispatchUser({ type: 'SET_USER', payload: json });
+        setUserDetails(json);
+      }
+      catch (error) {
+        console.error('Error fetching user data:', error.message);
+      }
+    }
+    if (user) {
+      fetchUserDetails();
+    }
+  } , [dispatchUser,user]);
 
   return (
     <Container className="mt-5">
@@ -65,17 +96,16 @@ const Profile = () => {
           <Form>
             <Form.Group controlId="profileFormName">
               <Form.Label>Name</Form.Label>
-              <Form.Control type="text" name="name" placeholder="Enter your name" onChange={handleInputChanges} value={userData.name} required />
+              <Form.Control type="text" name="name" placeholder="Enter your name" onChange={handleInputChanges} value={userDetails.name} required />
               {nameError && <Form.Text className="text-danger">{nameError}</Form.Text>}
             </Form.Group>
             <Form.Group controlId="profileFormPenName">
               <Form.Label>Pen Name</Form.Label>
-              <Form.Control type="text" name="penName" placeholder="Enter your pen name" onChange={handleInputChanges} value={userData.penName} required />
-              {penNameError && <Form.Text className="text-danger">{penNameError}</Form.Text>}
+              <Form.Control type="text" name="penName" placeholder="Enter your pen name" onChange={handleInputChanges} value={userDetails.penName} required />
             </Form.Group>
             <Form.Group controlId="profileFormDescription">
               <Form.Label>Bio</Form.Label>
-              <Form.Control as="textarea" rows={3} name="bio" placeholder="Enter a brief description about yourself" value={userData.bio} onChange={handleInputChanges} required />
+              <Form.Control as="textarea" rows={3} name="bio" placeholder="Enter a brief description about yourself" onChange={handleInputChanges} value={userDetails.bio} required />
             </Form.Group>
           </Form>
         </Modal.Body>

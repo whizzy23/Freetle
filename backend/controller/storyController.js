@@ -51,7 +51,7 @@ const story_delete = async (req, res) => {
 const story_update = async (req,res) => {
     try{
         const id = req.params.id
-        const workout = await Story.findOneAndUpdate({_id:id} , {...req.body})
+        const story = await Story.findOneAndUpdate({_id:id} , {...req.body})
         res.status(200).json({message:story})
     }
     catch(error){
