@@ -17,7 +17,12 @@ const storySchema = new Schema({
     author:{
         type:String,
         required:true
-    }  
+    },
+    user_id:{
+        type:String,
+        ref:'User',
+        required:true
+    }
 }, {timestamps:true} )
 
 const Story = mongoose.model('Story',storySchema)

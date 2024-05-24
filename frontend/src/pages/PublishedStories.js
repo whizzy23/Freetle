@@ -1,89 +1,68 @@
-import { useState } from 'react';
-import { Container, Row, Col, Card, Button, Modal, Form, Alert } from 'react-bootstrap';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
+import { useUserContext } from '../hooks/useUserContext';
+import { useAuthContext } from '../hooks/useAuthContext';
+import { useStoriesContext } from '../hooks/useStoriesContext';
+import StoryCardsDetails from '../components/storyCardsDetails';
+import StoryForm from '../components/storyForm';
 
 const PublishedStories = () => {
-  //dummy data
-  const [publishedStories, setPublishedStories] = useState([{ id: 1, title: 'Story 1', description: 'This is a short description of the story with above title.' , content : 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' ,author: "Eena Meena" }]);
-  const [showModal, setShowModal] = useState(false);
-  const [newStory, setNewStory] = useState({ title: '', description: '', content: '' });
-  const [emptyFieldError, setEmptyFieldError] = useState('');
+  const { userData,dispatchUser } = useUserContext();
+  const { user } = useAuthContext();
+  const { userStories,dispatchStory } = useStoriesContext();
 
-  const handleAddStory = () => {
-    if (!newStory.title.trim() || !newStory.description.trim() || !newStory.content.trim()) {
-      setEmptyFieldError('All fields are required');
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const [userDetailsResponse, userStoriesResponse] = await Promise.all([
+          fetch('/api/user/details', {
+            headers: { 'Authorization': `Bearer ${user.token}` },
+          }),
+          fetch('/api/stories/userStories', {
+            headers: { 'Authorization': `Bearer ${user.token}` },
+          })
+        ]);
+
+        const userDetails = await userDetailsResponse.json();
+        const userStories = await userStoriesResponse.json();
+
+        if (!userDetailsResponse.ok) throw new Error(userDetails.error);
+        if (!userStoriesResponse.ok) throw new Error(userStories.error);
+
+        dispatchUser({ type: 'SET_USER', payload: userDetails });
+        dispatchStory({ type: 'SET_USER_STORIES', payload: userStories });
+      } 
+      catch (error) {
+        console.error('Error fetching data:', error.message);
+      }
     }
-    else{
-      setPublishedStories([...publishedStories, { ...newStory, id: publishedStories.length + 1 }]);
-      setNewStory({ title: '', description: '', content: '' });
-      setEmptyFieldError('');
-      setShowModal(false);
+    if (user) {
+      fetchUserData();
     }
-  };
-
-  const handleOpenModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
-
-  const handleDeleteStory = (id) => {
-    const updatedStories = publishedStories.filter(story => story.id !== id);
-    setPublishedStories(updatedStories);
-  };
+  }, [dispatchUser, dispatchStory, user]);
 
   return (
-    <Container className="mt-5">
+    <Container className='mb-5'>
+      <StoryForm userData={userData} />
       <h1 className="text-center mb-4">Your Published Stories</h1>
       <Row>
         <Col>
-          {publishedStories.length === 0 ? (
+          {userStories.length === 0 ? (
             <Alert variant="info" className="text-center">You have not published any story yet.</Alert>
           ) : (
             <Row xs={1} md={2} lg={3} className="g-4">
-              {publishedStories.map(story => (
-                <Col key={story.id}>
-                    <Card className="h-100 clickable story-cards card-hover">
-                      <Card.Body>
-                        <a href={`/publications/story/${story.id}`} className="card-link">
-                          <Card.Title>{story.title}</Card.Title>
-                          <Card.Text>{story.description}</Card.Text>
-                        </a>
-                        <Button variant="secondary" onClick={() => handleDeleteStory(story.id)} className="delete-button mt-3">Delete</Button>
-                      </Card.Body>
-                    </Card>
+              {userStories.map(story => (
+                <Col key={user._id+story._id}>
+                  <Link to={`/story/${story._id}`} className="card-link">
+                    <StoryCardsDetails story={story} key={story._id} isPublicationPage={true} isUserStory={story.user_id === userData._id}/>
+                  </Link>
                 </Col>
               ))}
             </Row>
           )}
         </Col>
       </Row>
-      <div className="text-center">
-        <Button variant="dark" className="mt-4" onClick={handleOpenModal}>Upload Story</Button>
-      </div>
-      
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Upload Story</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className='p-4'>
-          <Form>
-            <Form.Group className='fw-bold' controlId="formTitle">
-              <Form.Label>Title</Form.Label>
-              <Form.Control type="text" placeholder="Enter title" value={newStory.title} onChange={(e) => setNewStory({ ...newStory, title: e.target.value })} required />
-            </Form.Group>
-            <Form.Group className='fw-bold' controlId="formDescription">
-              <Form.Label>Description</Form.Label>
-              <Form.Control as="textarea" rows={3} placeholder="Enter description" value={newStory.description} onChange={(e) => setNewStory({ ...newStory, description: e.target.value })} required />
-            </Form.Group>
-            <Form.Group className='fw-bold' controlId="formContent">
-              <Form.Label>Content</Form.Label>
-              <Form.Control as="textarea" rows={5} placeholder="Enter content" value={newStory.content} onChange={(e) => setNewStory({ ...newStory, content: e.target.value })} required />
-            </Form.Group>
-            {emptyFieldError && <Alert variant="danger">{emptyFieldError}</Alert>}
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>Cancel</Button>
-          <Button variant="dark " onClick={handleAddStory}>Upload</Button>
-        </Modal.Footer>
-      </Modal>
     </Container>
   );
 };

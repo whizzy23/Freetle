@@ -12,7 +12,7 @@ const bookmarkSchema = new Schema({
     ref: 'User',
     required: true
   }
-});
+},{timestamps: true});
 
 const Bookmark = mongoose.model('Bookmark', bookmarkSchema);
 

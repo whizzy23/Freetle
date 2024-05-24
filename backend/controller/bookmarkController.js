@@ -4,7 +4,7 @@ const Bookmark = require('../models/bookmarkModel');
 const bookmarks_index = async (req,res) => {
     const user_id = req.user._id
     try{
-        const bookmarks = await Bookmark.find({user_id}).populate('bookmarkStory')
+        const bookmarks = await Bookmark.find({user_id}).populate('bookmarkStory').sort({createdAt: -1})
         res.status(200).json(bookmarks)
     }
     catch(error){

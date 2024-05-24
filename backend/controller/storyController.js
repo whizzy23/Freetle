@@ -11,6 +11,18 @@ const stories_index = async (req,res) => {
     }
 }
 
+//GET USER STORIES
+const user_stories_index = async (req,res) => {
+    const user_id = req.user._id
+    try{
+        const stories = await Story.find({user_id}).sort({createdAt: -1})
+        res.status(200).json(stories)
+    }
+    catch(error){
+        res.status(400).json({error: error.message})
+    }
+}
+
 //GET SINGLE STORY
 const story_details = async (req,res) => {
     try{
@@ -25,9 +37,10 @@ const story_details = async (req,res) => {
 
 //CREATE STORY
 const story_create_post = async (req, res) => {
-    // const {title,description,content,author} = req.body
+    const user_id = req.user._id
+    const {title,description,content,author} = req.body
     try{
-      const story = await Story.create(req.body)
+      const story = await Story.create({title,description,content,author,user_id})
       res.status(200).json(story)
     }
     catch(error){
@@ -40,7 +53,7 @@ const story_delete = async (req, res) => {
     const id = req.params.id;
     try{
         const story = await Story.findOneAndDelete({_id:id})
-        res.status(200).json({message:story})
+        res.status(200).json({story})
     }
     catch(error){
         res.status(404).json({error: "No story found"})
@@ -59,4 +72,4 @@ const story_update = async (req,res) => {
     }
 }
 
-module.exports = { stories_index , story_details , story_create_post  , story_delete , story_update }
+module.exports = { stories_index ,user_stories_index , story_details , story_create_post , story_delete , story_update }
