@@ -9,7 +9,7 @@ const StoryPage = () => {
 
   useEffect(() => {
     const fetchStory = async () => {
-      const response = await fetch(`/api/stories/${window.location.pathname}` ,{
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/stories/${window.location.pathname}` ,{
       headers: {'Authorization': `Bearer ${user.token}`},});
       const json = await response.json();
       if(response.ok) {

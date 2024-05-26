@@ -29,7 +29,7 @@ const Profile = () => {
       setNameError('Please enter your name');
     }
     else{
-      const response = await fetch('/api/user/update', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/update`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await fetch('/api/user/details', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/details`, {
           headers: { 'Authorization': `Bearer ${user.token}` },
         });
         const json = await response.json();

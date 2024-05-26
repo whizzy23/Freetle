@@ -8,7 +8,7 @@ const BookmarkCards = ({story}) => {
   
     const deleteBookmark = async (e) => {
         e.preventDefault()
-        const response = await fetch('/api/bookmarks/' + story._id , {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/bookmarks/` + story._id , {
             method:"DELETE",
             headers: {'Authorization' : `Bearer ${user.token}`}
         })
@@ -20,7 +20,7 @@ const BookmarkCards = ({story}) => {
         }
         else{
             dispatchBookmark({ type: 'DELETE_BOOKMARK', payload: json })
-            dispatchBookmark({ type: 'SET_BOOKMARKS', payload: await fetch('/api/bookmarks',{
+            dispatchBookmark({ type: 'SET_BOOKMARKS', payload: await fetch(`${process.env.REACT_APP_API_URL}/api/bookmarks`,{
                 headers: {'Authorization': `Bearer ${user.token}`},})
                 .then(res => res.json()) 
             }); // Update bookmarks so that globally bookmarked stories are updated

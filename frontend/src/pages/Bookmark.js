@@ -14,7 +14,7 @@ const BookmarkPage = () => {
 
   useEffect(() => {
     const fetchBookmarks = async () => {
-      const response = await fetch('/api/bookmarks' ,{
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/bookmarks` ,{
         headers: {'Authorization': `Bearer ${user.token}`},});
       const json = await response.json();
       if(response.ok) {

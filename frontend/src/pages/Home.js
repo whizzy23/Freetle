@@ -25,13 +25,13 @@ const Home = () => {
   useEffect(() => {
     const fetchBookmarksAndStories = async () => {
       try {
-        const bookmarksResponse = await fetch('/api/bookmarks', {
+        const bookmarksResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/bookmarks`, {
         headers: {'Authorization': `Bearer ${user.token}`},})
         const bookmarksJson = await bookmarksResponse.json();
         if (bookmarksResponse.ok) {
           dispatchBookmark({ type: 'SET_BOOKMARKS', payload: bookmarksJson });
 
-          const storiesResponse = await fetch('/api/stories' , {
+          const storiesResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/stories` , {
             headers: {'Authorization': `Bearer ${user.token}`},});
           const storiesJson = await storiesResponse.json();
           if (storiesResponse.ok) {
