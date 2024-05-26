@@ -16,10 +16,10 @@ const PublishedStories = () => {
     const fetchUserData = async () => {
       try {
         const [userDetailsResponse, userStoriesResponse] = await Promise.all([
-          fetch('/api/user/details', {
+          fetch(`${process.env.REACT_APP_API_URL}/api/user/details`, {
             headers: { 'Authorization': `Bearer ${user.token}` },
           }),
-          fetch('/api/stories/userStories', {
+          fetch(`${process.env.REACT_APP_API_URL}/api/stories/userStories`, {
             headers: { 'Authorization': `Bearer ${user.token}` },
           })
         ]);

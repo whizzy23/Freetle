@@ -15,7 +15,7 @@ const Contact = () => {
 
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('/api/contact/sendMessage' , {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/contact/sendMessage` , {
         method:"POST",
         body:JSON.stringify(messageData),
         headers:{ 'Content-Type' : 'application/json' , 'Authorization' : `Bearer ${user.token}`}

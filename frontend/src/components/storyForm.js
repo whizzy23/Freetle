@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button, Modal, Form, Alert } from 'react-bootstrap';
 import { useUserContext } from '../hooks/useUserContext';
 import { useAuthContext } from '../hooks/useAuthContext';
@@ -49,7 +49,7 @@ const StoryForm = ({userData}) => {
         }
 
         try {
-            const response = await fetch('/api/user/update', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/update`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ const StoryForm = ({userData}) => {
         }
         else{
             try {
-            const response = await fetch('/api/stories/createStory', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/stories/createStory`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' , 'Authorization': `Bearer ${user.token}`},
                 body: JSON.stringify({...newStory,author}),

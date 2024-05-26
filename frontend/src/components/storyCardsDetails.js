@@ -16,11 +16,11 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
     e.preventDefault();
     try {
       const response = isBookmarked
-        ? await fetch(`/api/bookmarks/${story._id}`, {
+        ? await fetch(`${process.env.REACT_APP_API_URL}/api/bookmarks/${story._id}`, {
             method: 'DELETE' ,
             headers: {'Authorization': `Bearer ${user.token}`} 
           })
-        : await fetch('/api/bookmarks/add', {
+        : await fetch(`${process.env.REACT_APP_API_URL}/api/bookmarks/add`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${user.token}` },
             body: JSON.stringify({ bookmarkStory: story._id }),
@@ -30,7 +30,7 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
       if (!response.ok) throw new Error(json.error);
       
       dispatchBookmark({ type: isBookmarked ? 'DELETE_BOOKMARK' : 'ADD_BOOKMARK', payload: json });
-      dispatchBookmark({ type: 'SET_BOOKMARKS', payload: await fetch('/api/bookmarks',{           //updating bookmark status
+      dispatchBookmark({ type: 'SET_BOOKMARKS', payload: await fetch(`${process.env.REACT_APP_API_URL}/api/bookmarks`,{           //updating bookmark status
         headers: {'Authorization': `Bearer ${user.token}`},})
         .then(res => res.json()) 
       });
@@ -45,7 +45,7 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
     try {
       //first remove bookmark
       if (isBookmarked) {
-        const response = await fetch(`/api/bookmarks/${story._id}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/bookmarks/${story._id}`, {
           method: 'DELETE' ,
           headers: {'Authorization': `Bearer ${user.token}`} 
         })
@@ -55,18 +55,18 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
       dispatchBookmark({ type: isBookmarked ? 'DELETE_BOOKMARK' : 'ADD_BOOKMARK', payload: json });
       }
 
-      const response = await fetch(`/api/stories/story/${story._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/stories/story/${story._id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${user.token}` },
       });
       const json = await response.json();
       if (!response.ok) throw new Error(json.error);
       dispatchStory({ type: 'DELETE_STORY', payload: json });
-      dispatchStory({ type: 'SET_STORIES', payload: await fetch('/api/stories',{           //updating stories
+      dispatchStory({ type: 'SET_STORIES', payload: await fetch(`${process.env.REACT_APP_API_URL}/api/stories`,{           //updating stories
         headers: {'Authorization': `Bearer ${user.token}`},})
         .then(res => res.json())
       });
-      dispatchStory({ type: 'SET_USER_STORIES', payload: await fetch('/api/stories/userStories',{           //updating stories
+      dispatchStory({ type: 'SET_USER_STORIES', payload: await fetch(`${process.env.REACT_APP_API_URL}/api/stories/userStories`,{           //updating stories
         headers: {'Authorization': `Bearer ${user.token}`},})
         .then(res => res.json()) 
       });
