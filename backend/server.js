@@ -3,6 +3,7 @@ const storiesRoutes = require('./routes/stories')
 const contactRoutes = require('./routes/contact')
 const bookmarkRoutes = require('./routes/bookmark')
 const userRoutes = require('./routes/user')
+const commentRoutes = require('./routes/comments')
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
@@ -43,3 +44,6 @@ app.use('/api/contact',contactRoutes)
 
 // boookmark routes
 app.use('/api/bookmarks',bookmarkRoutes)
+
+// comments routes
+app.use('/api/comments',commentRoutes)

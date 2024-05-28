@@ -55,6 +55,13 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
       dispatchBookmark({ type: isBookmarked ? 'DELETE_BOOKMARK' : 'ADD_BOOKMARK', payload: json });
       }
 
+      //remove all comments
+      await fetch(`${process.env.REACT_APP_API_URL}/api/comments/${story._id}/deleteAll`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${user.token}` },
+      });
+
+      //delete story
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/stories/story/${story._id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${user.token}` },
