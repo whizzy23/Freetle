@@ -7,6 +7,7 @@ import { BookmarkContextProvider } from './context/BookmarkContext';
 import { StoriesContextProvider } from './context/StoriesContext';
 import { AuthContextProvider } from './context/AuthContext';
 import { UserContextProvider } from './context/UserContext';
+import { CommentContextProvider } from './context/commentContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,9 +15,11 @@ root.render(
     <AuthContextProvider>
       <UserContextProvider>
         <BookmarkContextProvider>
-          <StoriesContextProvider>
-            <App />
-          </StoriesContextProvider>
+          <CommentContextProvider>
+            <StoriesContextProvider>
+              <App />
+            </StoriesContextProvider>
+          </CommentContextProvider>
         </BookmarkContextProvider>
       </UserContextProvider>
     </AuthContextProvider>

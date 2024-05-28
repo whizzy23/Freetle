@@ -5,27 +5,27 @@ const validator = require('validator')
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
-    name: {
-        type: String,
-        required: true
-      },
-      penName : {
-          type: String,
-          default: ''
-      },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    bio : {
-        type: String,
-        default: ''
-    }
+  name:{
+    type: String,
+    required: true
+  },
+  penName:{
+    type: String,
+    default: ''
+  },
+  email:{
+    type: String,
+    required: true,
+    unique: true
+  },
+  password:{
+    type: String,
+    required: true
+  },
+  bio:{
+    type: String,
+    default: ''
+  }
 })
 
 // static signup method
