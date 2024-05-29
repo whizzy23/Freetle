@@ -3,6 +3,7 @@ import { Button, Modal, Form, Alert } from 'react-bootstrap';
 import { useUserContext } from '../hooks/useUserContext';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useStoriesContext } from '../hooks/useStoriesContext';
+import { toast } from 'react-toastify';
 
 const StoryForm = ({userData}) => {
     const [newStory, setNewStory] = useState({ title: '' , description: '' , content: ''});
@@ -95,6 +96,7 @@ const StoryForm = ({userData}) => {
             catch (error) {
             console.error(error);
             }
+            toast.success('Story uploaded successfully');
             setNewStory({ title: '', description: '', content: '' });
             setEmptyFieldError('');
             setShowModal(false);

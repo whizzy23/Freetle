@@ -23,6 +23,7 @@ const Navigation = () => {
   };
 
   const handleLogout = () => {
+    setExpanded(false);
     logout()
   }
 
