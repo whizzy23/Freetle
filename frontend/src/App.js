@@ -1,5 +1,5 @@
 import React from "react";
-import Navigation from "./pages/Navigation";
+import Navigation from "./components/Navigation";
 import Home from "./pages/Home";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
@@ -8,6 +8,7 @@ import Profile from "./pages/Profile"
 import Bookmark from "./pages/Bookmark";
 import PublishedStories from "./pages/PublishedStories";
 import StoryPage from "./pages/StoryPage";
+import NotFound from "./pages/NotFound";
 import { BrowserRouter , Routes , Route , Navigate } from "react-router-dom";
 import { useAuthContext } from "./hooks/useAuthContext";
 import "./custom.css"
@@ -26,7 +27,8 @@ function App() {
           <Route path="/bookmarks" element={isLoading ? (<p>Loading...</p>) : user ? <Bookmark /> : <Navigate to="/signup" />}             />
           <Route path="/publications" element={isLoading ? (<p>Loading...</p>) : user ? <PublishedStories /> : <Navigate to="/signup" />}  />
           <Route path="/story/:id" element={isLoading ? (<p>Loading...</p>) : user ? <StoryPage /> : <Navigate to="/signup" />}            />
-          <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/" />}                       />
+          <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/" />}                                                         />
+          <Route path="*" element={isLoading ? (<p>Loading...</p>) : user ? <NotFound /> : <Navigate to="/signup" />}                      />
         </Routes>
       </div>
     </BrowserRouter>
