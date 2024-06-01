@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { toast } from 'react-toastify';
 
 const Contact = () => {
   const [messageData,setMessageData] = useState({ userName: '' , userEmail: '' , userMessage: '' });
@@ -27,6 +28,7 @@ const Contact = () => {
         setEmptyFields(json.emptyFields)
     }
     else{
+        toast.success('Message sent');
         setError(null)
         setEmptyFields([])
         setMessageData({ ...messageData, userName:'' , userEmail:'' , userMessage:'' });

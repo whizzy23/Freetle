@@ -1,6 +1,7 @@
 import { Card , Button } from 'react-bootstrap'
 import { useBookmarkContext } from '../hooks/useBookmarkContext'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { toast } from 'react-toastify'
 
 const BookmarkCards = ({story}) => {
     const { user } = useAuthContext()
@@ -24,6 +25,7 @@ const BookmarkCards = ({story}) => {
                 headers: {'Authorization': `Bearer ${user.token}`},})
                 .then(res => res.json()) 
             }); // Update bookmarks so that globally bookmarked stories are updated
+            toast.success('Bookmark removed')
         }
     }
 

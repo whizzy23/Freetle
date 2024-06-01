@@ -8,6 +8,8 @@ import { StoriesContextProvider } from './context/StoriesContext';
 import { AuthContextProvider } from './context/AuthContext';
 import { UserContextProvider } from './context/UserContext';
 import { CommentContextProvider } from './context/commentContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,6 +20,8 @@ root.render(
           <CommentContextProvider>
             <StoriesContextProvider>
               <App />
+              <ToastContainer position="bottom-center" autoClose={500} hideProgressBar newestOnTop closeOnClick
+              rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover theme="dark" />
             </StoriesContextProvider>
           </CommentContextProvider>
         </BookmarkContextProvider>

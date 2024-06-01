@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import { Image,Navbar,Nav,Container,NavDropdown } from 'react-bootstrap';
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useLogout } from "../hooks/useLogout";
-import 'bootstrap/dist/css/bootstrap.css';
 import userIcon from "../assets/userIcon.png"
 import logo from "../assets/logo.png"
 
@@ -23,6 +22,7 @@ const Navigation = () => {
   };
 
   const handleLogout = () => {
+    setExpanded(false);
     logout()
   }
 

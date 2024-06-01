@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button, Image, Modal, Form } from 'react-bootstrap';
 import { useUserContext } from '../hooks/useUserContext';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { toast } from 'react-toastify';
 
 const Profile = () => {
   const [showModal , setShowModal] = useState(false)
@@ -46,6 +47,7 @@ const Profile = () => {
       else {
         dispatchUser({ type: 'UPDATE_USER', payload: json });
         dispatchUser({ type: 'SET_USER', payload: json });
+        toast.success('Profile updated successfully');
         setNameError('')
         handleCloseModal();
       }

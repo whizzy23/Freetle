@@ -3,6 +3,7 @@ import { Card,Button } from 'react-bootstrap';
 import { useBookmarkContext } from '../hooks/useBookmarkContext';
 import { useStoriesContext } from '../hooks/useStoriesContext';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { toast } from 'react-toastify';
 import bookmark from '../assets/bookmark.svg';
 import bookmarkFilled from '../assets/bookmarkfilled.svg';
 
@@ -34,6 +35,7 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
         headers: {'Authorization': `Bearer ${user.token}`},})
         .then(res => res.json()) 
       });
+      toast.success(isBookmarked ? 'Bookmark removed' : 'Bookmark added');
       setIsBookmarked(!isBookmarked); 
     } catch (error) {
       console.error(`Error ${isBookmarked ? 'removing' : 'adding'} bookmark:`, error.message);
@@ -43,6 +45,7 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
   const handleDeleteStory = async (e) => {
     e.preventDefault();
     try {
+      const deleteNoti = toast.loading("Please wait...")
       //first remove bookmark
       if (isBookmarked) {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/bookmarks/${story._id}`, {
@@ -77,6 +80,7 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
         headers: {'Authorization': `Bearer ${user.token}`},})
         .then(res => res.json()) 
       });
+      toast.update(deleteNoti , { render: "Story deleted successfully", type: "success", isLoading: false, autoClose: 500});
     } 
     catch (error) {
       console.error('Failed to delete story:', error.message);
