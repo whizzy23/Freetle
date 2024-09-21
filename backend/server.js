@@ -4,6 +4,7 @@ const contactRoutes = require('./routes/contact')
 const bookmarkRoutes = require('./routes/bookmark')
 const userRoutes = require('./routes/user')
 const commentRoutes = require('./routes/comments')
+const paymentRoutes = require('./routes/payment')
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
@@ -47,3 +48,6 @@ app.use('/api/bookmarks',bookmarkRoutes)
 
 // comments routes
 app.use('/api/comments',commentRoutes)
+
+// payment routes
+app.use('/api/payment', paymentRoutes);

@@ -3,6 +3,7 @@ import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useSignup } from '../hooks/useSignup';
 import { useLogin } from '../hooks/useLogin';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const SignUp = () => {
   const {signup, error: signupError , isLoading: isSignupLoading } = useSignup();
@@ -10,6 +11,7 @@ const SignUp = () => {
   const [loginFormData, setLoginFormData] = useState({ email: '', password: '' });
   const [signupFormData, setSignupFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [activeTab, setActiveTab] = useState('login')
+  const [captchaVerified, setCaptchaVerified] = useState(false);
 
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +39,10 @@ const SignUp = () => {
     await signup(name, email, password,confirmPassword);
   };
 
+  const onCaptchaChange = (value) => {
+    setCaptchaVerified(value);
+  };
+
   return (
     <Container className='pb-5'>
       <Row className="justify-content-md-center mt-5">
@@ -57,7 +63,12 @@ const SignUp = () => {
                   <Form.Control type="password" name="password" value={loginFormData.password} onChange={handleLoginInputChange} placeholder="Password" />
                 </Form.Group>
                 {loginError && <Alert variant="danger">{loginError}</Alert>}
-                <Button disabled={isLoginLoading} variant="dark" type="submit" className='mt-2'>Login</Button>
+                {/* reCAPTCHA */}
+                <ReCAPTCHA
+                  sitekey={process.env.REACT_APP_RECAPTCHA_KEY}
+                  onChange={onCaptchaChange}
+                />
+                <Button disabled={isLoginLoading || !captchaVerified} variant="dark" type="submit" className='mt-2'>Login</Button>  
               </Form>
             ) : (
               <Form onSubmit={handleSignupSubmit}>
@@ -78,7 +89,12 @@ const SignUp = () => {
                   <Form.Control type="password" name="confirmPassword" value={signupFormData.confirmPassword} onChange={handleSignupInputChange} placeholder="Confirm Password" />
                 </Form.Group>
                 {signupError && <Alert variant="danger">{signupError}</Alert>}
-                <Button disabled={isSignupLoading} variant="dark" type="submit" className='mt-2'>Signup</Button>
+                {/* reCAPTCHA */}
+                <ReCAPTCHA
+                  sitekey={process.env.REACT_APP_RECAPTCHA_KEY}
+                  onChange={onCaptchaChange}
+                />
+                <Button disabled={isSignupLoading || !captchaVerified} variant="dark" type="submit" className='mt-2'>Signup</Button>
               </Form>
             )}
           </div>
