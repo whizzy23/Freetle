@@ -32,11 +32,8 @@ const userSchema = new Schema({
 userSchema.statics.signup = async function(name,email,password,confirmPassword) {
 
   // validation
-  if (!name || !email || !password || !confirmPassword) {
+  if (!name || !password || !confirmPassword) {
     throw Error('All fields must be filled')
-  }
-  if (!validator.isEmail(email)) {
-    throw Error('Email not valid')
   }
   if (!validator.isStrongPassword(password)) {
     throw Error('Password must be at least 8 characters long and contain at least one lowercase, one uppercase, one number and one special character')
@@ -67,9 +64,12 @@ userSchema.statics.login = async function(email, password) {
   }
 
   const user = await this.findOne({ email })
-  const match = await bcrypt.compare(password, user.password)
+  if (!user) {
+    throw Error('Email not found')
+  }
   
-  if (!user || !match) {
+  const match = await bcrypt.compare(password, user.password)
+  if (!match) {
     throw Error('Incorrect login credentials')
   }
 
