@@ -22,6 +22,9 @@ const storySchema = new Schema({
         type:String,
         ref:'User',
         required:true
+    },
+    coverImageUrl:{
+        type:String
     }
 }, {timestamps:true} )
 

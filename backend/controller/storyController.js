@@ -39,8 +39,9 @@ const story_details = async (req,res) => {
 const story_create_post = async (req, res) => {
     const user_id = req.user._id
     const {title,description,content,author} = req.body
+    const coverImageUrl = req.file ? `/uploads/${req.file.filename}` : null;
     try{
-      const story = await Story.create({title,description,content,author,user_id})
+      const story = await Story.create({title,description,content,author,user_id,coverImageUrl})
       res.status(200).json(story)
     }
     catch(error){

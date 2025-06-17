@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { stories_index , user_stories_index , story_details , story_create_post , story_delete , story_update } = require('../controller/storyController')
 const requireAuth  = require('../middleware/requireAuth')
+const upload = require('../middleware/upload')
 
 // require authentication for all routes
 router.use(requireAuth)
@@ -13,7 +14,7 @@ router.get('/', stories_index)
 router.get('/userStories', user_stories_index)
 
 // POST a new story
-router.post('/createStory', story_create_post)
+router.post('/createStory', upload.single('coverImage'), story_create_post)
 
 // GET a single story
 router.get('/story/:id', story_details)  
