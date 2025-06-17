@@ -31,6 +31,13 @@ const BookmarkCards = ({story}) => {
 
     return (
         <Card className="story-cards h-100 card-hover">
+            {story.coverImageUrl && (
+                <Card.Img
+                variant="top"
+                src={`${process.env.REACT_APP_API_URL}${story.coverImageUrl}`}
+                style={{ objectFit: 'cover', height: '150px', width: '100%' }}
+                />
+            )}
             <Card.Body>
                 <Card.Title>{story.title}</Card.Title>
                 <Card.Text>{story.description}</Card.Text>

@@ -1,5 +1,6 @@
 import { useState, useEffect} from 'react';
 import { Card, Form, Button, Image, Collapse } from 'react-bootstrap';
+import DOMPurify from 'dompurify';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useCommentContext } from '../hooks/useCommentContext';
 import { useUserContext } from '../hooks/useUserContext';
@@ -91,9 +92,17 @@ const StoryDetails = ({ story }) => {
         <div className="container-xl">
             <div className="d-flex justify-content-center align-items-center p-0 pb-5 p-md-4">
                 <Card className="story-card p-1 p-md-3 mt-4 border-primary border-1 rounded">
+                    {story.coverImageUrl && (
+                    <Card.Img
+                        variant="top"
+                        src={`${process.env.REACT_APP_API_URL}${story.coverImageUrl}`}
+                        alt="Story cover"
+                        className="mb-4 img-fluid w-100 h-auto"
+                    />
+                    )}
                     <Card.Body>
                         <Card.Title className="story-title fs-1 mb-3">{story.title}</Card.Title>
-                        <Card.Text className="story-content">{story.content}</Card.Text>
+                        <Card.Text className="story-content" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize((story?.content || '').replace(/\n/g, '<br/>')) }} />
 
                         <Button variant="secondary" onClick={() => setShowComments(!showComments)} aria-controls="comments-collapse" aria-expanded={showComments} className="mb-3" >
                             {showComments ? 'Hide Comments' : 'Show Comments'}

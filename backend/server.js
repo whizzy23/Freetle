@@ -12,6 +12,7 @@ const cors = require('cors')
 // express app
 const app = express()
 app.use(cors())
+app.use('/uploads', express.static('uploads'));
 
 // connect to db
 mongoose.connect(process.env.MONGO_URI)
