@@ -34,7 +34,7 @@ const BookmarkCards = ({story}) => {
             {story.coverImageUrl && (
                 <Card.Img
                 variant="top"
-                src={`${process.env.REACT_APP_API_URL}${story.coverImageUrl}`}
+                src={story.coverImageUrl}
                 style={{ objectFit: 'cover', height: '150px', width: '100%' }}
                 />
             )}

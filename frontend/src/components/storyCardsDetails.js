@@ -45,8 +45,8 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
 
   const handleDeleteStory = async (e) => {
     e.preventDefault();
+    const deleteNoti = toast.loading("Please wait...");
     try {
-      const deleteNoti = toast.loading("Please wait...")
       //first remove bookmark
       if (isBookmarked) {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/bookmarks/${story._id}`, {
@@ -84,6 +84,7 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
       toast.update(deleteNoti , { render: "Story deleted successfully", type: "success", isLoading: false, autoClose: 500});
     } 
     catch (error) {
+      toast.update(deleteNoti , { render: "Failed to delete story", type: "error", isLoading: false, autoClose: 500});
       console.error('Failed to delete story:', error.message);
     }
   }
@@ -94,7 +95,7 @@ const StoryCardsDetails = ({ story,isPublicationPage,isUserStory }) => {
       {story.coverImageUrl && (
         <Card.Img
           variant="top"
-          src={`${process.env.REACT_APP_API_URL}${story.coverImageUrl}`}
+          src={story.coverImageUrl}
           style={{ objectFit: 'cover', height: '200px' }}
         />
       )}

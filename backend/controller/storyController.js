@@ -1,4 +1,5 @@
 const Story = require('../models/storyModel')
+const { cloudinary } = require('../utils/cloudinary')
 
 //GET ALL STORIES
 const stories_index = async (req,res) => {
@@ -39,9 +40,11 @@ const story_details = async (req,res) => {
 const story_create_post = async (req, res) => {
     const user_id = req.user._id
     const {title,description,content,author} = req.body
-    const coverImageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const coverImageUrl = req.file ? req.file.path : null;
+    const coverImagePublicId = req.file ? req.file.filename : null;
     try{
-      const story = await Story.create({title,description,content,author,user_id,coverImageUrl})
+      const story = await Story.create({title,description,content,author,user_id,coverImageUrl,coverImagePublicId})
+      console.log(story);
       res.status(200).json(story)
     }
     catch(error){
@@ -53,11 +56,20 @@ const story_create_post = async (req, res) => {
 const story_delete = async (req, res) => {
     const id = req.params.id;
     try{
-        const story = await Story.findOneAndDelete({_id:id})
+        const story = await Story.findById(id);
+        if (!story) {
+            return res.status(404).json({error: "No story found"});
+        }
+        // delete coverImage from Cloudinary, if exists
+        if (story.coverImagePublicId) {
+            await cloudinary.uploader.destroy(story.coverImagePublicId);
+        }
+        // delete story
+        await Story.findByIdAndDelete({_id: id});
         res.status(200).json({story})
     }
     catch(error){
-        res.status(404).json({error: "No story found"})
+        res.status(500).json({error: error.message});
     }
 }
 

@@ -83,7 +83,7 @@ const StoryForm = ({ userData }) => {
 
   const handleAddStory = async (e) => {
     e.preventDefault();
-
+    const uploadStoryNoti = toast.loading("Uploading story...");
     if (
       !newStory.title.trim() ||
       !newStory.description.trim() ||
@@ -113,12 +113,13 @@ const StoryForm = ({ userData }) => {
           throw new Error("Failed to upload story");
         }
         dispatchStory({ type: "CREATE_STORY", payload: json });
-        toast.success("Story uploaded successfully");
+        toast.update(uploadStoryNoti, { render: "Story uploaded successfully!", type: "success", isLoading: false, autoClose: 500, });
         setNewStory({ title: "", description: "", content: "" });
         setCoverImage(null);
         setEmptyFieldError("");
         setShowModal(false);
       } catch (error) {
+        toast.update(uploadStoryNoti, { render: "Failed to upload story", type: "error", isLoading: false, autoClose: 500, });
         console.error(error);
       }
     }

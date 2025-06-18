@@ -95,7 +95,7 @@ const StoryDetails = ({ story }) => {
                     {story.coverImageUrl && (
                     <Card.Img
                         variant="top"
-                        src={`${process.env.REACT_APP_API_URL}${story.coverImageUrl}`}
+                        src={story.coverImageUrl}
                         alt="Story cover"
                         className="mb-4 img-fluid w-100 h-auto"
                     />
