@@ -12,6 +12,13 @@ export const userReducer = (state, action) => {
         return { 
             userData: [state.userData, action.payload]
         }
+    case 'UPDATE_PURCHASES':
+        return {
+            userData: {
+                ...state.userData,
+                purchasedBooks: [...state.userData.purchasedBooks, action.payload]
+            }
+        }
     default:
       return state
   }

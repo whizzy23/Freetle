@@ -123,3 +123,13 @@
   font-size: 0.8em;
   color: #888;
 }
+
+/* download-btn css */
+.download-btn {
+  background-color: #2c2ca8ff;
+  color: white;
+}
+.download-btn:hover {
+  background-color: #4444dd;
+  color: white;
+}

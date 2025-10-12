@@ -1,0 +1,20 @@
+[
+  {
+    "id": "book1",
+    "title": "Eminence in shadow",
+    "price": 100,
+    "src": "https://drive.google.com/uc?export=download&id=1-_CY1epX0tZSocFw_Er6rcu6rObr3Ad3"
+  },
+  {
+    "id": "book2",
+    "title": "Frieren: Beyond Journey's End",
+    "price": 100,
+    "src": "https://drive.google.com/uc?export=download&id=1_nX10AkYkdaed2qv1-HSJcFFXS3k4Xwa"
+  },
+  {
+    "id": "book3",
+    "title": "Deranged Detective",
+    "price": 100,
+    "src": "https://drive.google.com/uc?export=download&id=1Fke6dGoQ2f8c2SwJVzahBKYVNERo41j0"
+  }
+]

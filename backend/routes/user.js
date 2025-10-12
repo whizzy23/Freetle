@@ -1,5 +1,5 @@
 const express = require('express')
-const { loginUser, signupUser, getUser, updateUser, generateOTP, verifyOTP } = require('../controller/userController')
+const { loginUser, signupUser, getUser, updateUser, generateOTP, verifyOTP, getUserPurchases } = require('../controller/userController')
 const requireAuth  = require('../middleware/requireAuth')
 const router = express.Router()
 
@@ -20,6 +20,9 @@ router.use(requireAuth)
 
 // get user details
 router.get('/details', getUser )
+
+// get user's purchased books
+router.get('/purchases', getUserPurchases )
 
 // update user details
 router.patch('/update', updateUser )

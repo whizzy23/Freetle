@@ -25,6 +25,10 @@ const userSchema = new Schema({
   bio:{
     type: String,
     default: ''
+  },
+  purchasedBooks:{
+    type: [String],
+    default: []
   }
 })
 

@@ -44,8 +44,10 @@ const PublishedStories = () => {
 
   return (
     <Container className='mb-5'>
-      <StoryForm userData={userData} />
-      <h1 className="text-center mb-4">Your Published Stories</h1>
+      <h1 className="text-center mt-5">Your Published Stories</h1>
+      <div className="d-flex justify-content-end mb-4">
+        <StoryForm userData={userData} />
+      </div>
       <Row>
         <Col>
           {userStories.length === 0 ? (

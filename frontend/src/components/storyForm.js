@@ -83,7 +83,6 @@ const StoryForm = ({ userData }) => {
 
   const handleAddStory = async (e) => {
     e.preventDefault();
-    const uploadStoryNoti = toast.loading("Uploading story...");
     if (
       !newStory.title.trim() ||
       !newStory.description.trim() ||
@@ -91,6 +90,7 @@ const StoryForm = ({ userData }) => {
     ) {
       setEmptyFieldError("All fields are required");
     } else {
+      const uploadStoryNoti = toast.loading("Uploading story...");
       try {
         const formData = new FormData();
         formData.append("title", newStory.title);
@@ -127,7 +127,7 @@ const StoryForm = ({ userData }) => {
 
   return (
     <>
-      <div className="text-center my-4">
+      <div className="my-4">
         <Button variant="dark" onClick={handleOpenModal}>
           Upload Story
         </Button>

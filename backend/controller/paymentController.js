@@ -55,6 +55,11 @@ const verify_payment = async (req, res) => {
 
       await payment.save(); // Save the payment details in the database
 
+      // Create purchase record for the user
+      const user = req.user;
+      user.purchasedBooks.push(req.body.bookId);
+      await user.save(); // Save the updated user details
+
       // Send success response to the client
       res.status(200).json({ message: 'Payment Verified Successfully' });
     } else {

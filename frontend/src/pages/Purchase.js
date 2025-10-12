@@ -1,24 +1,20 @@
-import { useState , useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 import { useUserContext } from '../hooks/useUserContext';
 import { useAuthContext } from '../hooks/useAuthContext';
 import ReCAPTCHA from 'react-google-recaptcha';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const PurchasePage = () => {
+  const { userData , dispatchUser } = useUserContext();
+  const { user } = useAuthContext();
+  const [books, setBooks] = useState([]);
+  const purchasedBooks = userData?.purchasedBooks || [];
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [selectedBook, setSelectedBook] = useState('');
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { userData , dispatchUser } = useUserContext();
-  const { user } = useAuthContext();
-
-  const books = [
-    { id: 'book1', title: 'Eminence in shadow', price: 100 },
-    { id: 'book2', title: `Frieren: Beyond Journey's End`, price: 100 },
-    { id: 'book3', title: 'Deranged Detective', price: 100 },
-  ];
 
   // Handle Payment Function
   const handlePayment = async () => {
@@ -41,6 +37,7 @@ const PurchasePage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`,
         },
         body: JSON.stringify({
           amount: selectedBookData.price,
@@ -76,17 +73,20 @@ const PurchasePage = () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${user.token}`,
             },
             body: JSON.stringify({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
+              bookId: selectedBook,
             }),
           });
 
           const verifyData = await verifyRes.json();
           if (verifyData.message) {
             toast.success('Payment successful!');
+            dispatchUser({ type: 'UPDATE_PURCHASES', payload: selectedBook });
           } else {
             toast.error('Payment verification failed');
           }
@@ -124,11 +124,24 @@ const PurchasePage = () => {
       catch (error) {
         console.error('Error fetching user data:', error.message);
       }
-    }
+    };
+    const fetchBooks = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books`, {
+          headers: { 'Authorization': `Bearer ${user.token}` },
+        });
+        const json = await response.json();
+        if (!response.ok) throw new Error(json.error);
+        setBooks(json.books || []);
+      } catch (error) {
+        console.error('Error fetching books:', error.message);
+      }
+    };
     if (user) {
       fetchUserDetails();
+      fetchBooks();
     }
-  } , [dispatchUser,user]);
+  }, [dispatchUser, user]);
 
   return (
     <div className="container mt-5">
@@ -165,8 +178,14 @@ const PurchasePage = () => {
             >
               <option value="">Select a book</option>
               {books.map(book => (
-                <option key={book.id} value={book.id}>
+                <option
+                  key={book.id}
+                  value={book.id}
+                  disabled={purchasedBooks.includes(book.id)}
+                  style={purchasedBooks.includes(book.id) ? { color: 'red' } : {}}
+                >
                   {book.title} - ₹{book.price}
+                  {purchasedBooks.includes(book.id) ? ' (Already purchased)' : ''}
                 </option>
               ))}
             </Form.Control>
@@ -182,7 +201,7 @@ const PurchasePage = () => {
           <Button
             variant="dark"
             className="mt-3"
-            disabled={loading || !captchaVerified}
+            disabled={loading || !captchaVerified || !selectedBook || purchasedBooks.includes(selectedBook)}
             onClick={handlePayment}
           >
             {loading ? 'Processing...' : `Pay ₹${selectedBook ? books.find(b => b.id === selectedBook)?.price : '...'}`}
