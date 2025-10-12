@@ -1,70 +1,97 @@
-# Getting Started with Create React App
+# Freetle Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Freetle is a full-stack web application for sharing, discovering, bookmarking, commenting on, and purchasing stories. It provides a seamless experience for both readers and writers, with robust user authentication, story management, and secure payment integration.
 
-## Available Scripts
+## Project Structure
 
-In the project directory, you can run:
+- **backend/**: Node.js/Express server, MongoDB (Mongoose), JWT, Razorpay, Cloudinary, Multer, Nodemailer
+	- Controllers for business logic (user, story, bookmark, comment, contact, payment)
+	- Middlewares for authentication and uploads
+	- Models for User, Story, Bookmark, Comment, Payment, OTP, Message
+	- Routes for API endpoints
+	- Utilities for image uploads
+- **frontend/**: React app, React Router, Bootstrap, Context API, Toastify
+	- Components for navigation, story display, bookmarks, etc.
+	- Contexts for global state (auth, bookmarks, comments, stories, user)
+	- Custom hooks for API calls and state logic
+	- Pages for main navigation and user interaction
 
-### `npm start`
+## Key Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Backend
+- User authentication (signup, login) with password hashing and JWT tokens
+- Story CRUD operations (create, read, update, delete)
+- Bookmarking stories for quick access
+- Commenting system for user interaction
+- Contact form for user feedback, sent via email
+- **Payment workflow for purchasing stories (Razorpay):**
+	- Users can purchase stories securely via Razorpay
+	- Purchased books are tracked in the user's account and stored in the backend
+	- Duplicate purchases are restricted; users cannot buy the same book twice
+	- Purchased books are visible in a dedicated section, with download options for each book
+	- Payment controller and user model updated to support purchase tracking and validation
+- Image upload support via Cloudinary
+- OTP model for secure operations (e.g. signup)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Frontend
+- User registration and login forms
+- Story browsing, creation, editing, and detailed views
+- Bookmark management (add/remove bookmarks)
+- Commenting system (add/view comments)
+- Profile page with user info and bio
+- About and Contact pages
+- **Purchase flow for buying stories:**
+	- Integrated with backend payment API
+	- Purchased books section with download buttons
+	- Restricts duplicate purchases and provides feedback
+- Responsive design for desktop and mobile
+- Toast notifications for feedback
 
-### `npm test`
+## Setup & Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Backend
+1. Clone the repository and navigate to `backend/`
+2. Run `npm install` to install dependencies
+3. Create a `.env` file with:
+	 - `MONGO_URI`: MongoDB connection string
+	 - `PORT`: Server port
+	 - `JWT_SECRET`: JWT signing key
+	 - `CLOUDINARY_API_KEY`: Cloudinary API key
+	 - `RAZORPAY_KEY`: Razorpay API key
+4. Start the server with `npm run dev`
 
-### `npm run build`
+### Frontend
+1. Navigate to `frontend/`
+2. Run `npm install`
+3. Start the React app with `npm start`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## API Endpoints (Backend)
+- `/api/user`: User registration, login, profile management
+- `/api/stories`: Story CRUD operations
+- `/api/bookmarks`: Bookmark management
+- `/api/comments`: Comment management
+- `/api/contact`: Contact form submissions
+- `/api/payment`: Payment processing
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Frontend Routes
+- `/`: Home page
+- `/about`: About page
+- `/contact`: Contact page
+- `/profile`: User profile
+- `/bookmarks`: User's bookmarks
+- `/stories/:id`: Story details
+- `/purchase`: Purchase flow
+- `/signup`: Registration
+- `/login`: Login
+- `/404`: Not Found
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## State Management (Frontend)
+- AuthContext: Manages authentication state (login, logout, signup)
+- BookmarkContext: Manages bookmarks
+- CommentContext: Manages comments
+- StoriesContext: Manages stories
+- UserContext: Manages user profile data
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Authors & License
+- Owner: whizzy23
+- License: MIT
