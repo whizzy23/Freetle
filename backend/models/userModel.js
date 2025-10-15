@@ -30,6 +30,11 @@ const userSchema = new Schema({
     type: [String],
     default: []
   }
+  ,
+  wallet: {
+    type: Number,
+    default: 0
+  }
 })
 
 // static signup method

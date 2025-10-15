@@ -130,6 +130,46 @@ const getUserPurchases = async (req, res) => {
   }
 };
 
+// get user's wallet balance
+const getUserWallet = async (req, res) => {
+  const user_id = req.user._id;
+  try {
+    const user = await User.findById(user_id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json({ wallet: user.wallet });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// get user's wallet history (earnings from book purchases)
+const getWalletHistory = async (req, res) => {
+  try {
+    const user_id = req.user._id;
+    const Books = require('../models/bookModel');
+    const User = require('../models/userModel');
+    // Find all books owned by user
+    const books = await Books.find({ owner: user_id });
+    const history = [];
+    for (const book of books) {
+      // Count how many users purchased this book
+      const purchasers = await User.countDocuments({ purchasedBooks: book._id.toString() });
+      history.push({
+        bookId: book._id,
+        title: book.title,
+        price: book.price,
+        timesPurchased: purchasers,
+        totalEarned: book.price * purchasers
+      });
+    }
+    res.status(200).json({ history });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 // update user details
 const updateUser = async (req, res) => {
   const user_id = req.user._id;
@@ -147,4 +187,4 @@ const updateUser = async (req, res) => {
 };
 
 
-module.exports = { signupUser, loginUser, getUser, getUserPurchases, updateUser, generateOTP, verifyOTP }
+module.exports = { signupUser, loginUser, getUser, getUserPurchases, updateUser, generateOTP, verifyOTP, getUserWallet, getWalletHistory }

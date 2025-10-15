@@ -1,6 +1,8 @@
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Payment = require('../models/paymentModel');
+const Books = require('../models/bookModel');
+const User = require('../models/userModel');
 
 // Initialize Razorpay instance
 const razorpayInstance = new Razorpay({
@@ -33,7 +35,7 @@ const create_order = async (req, res) => {
 
 // Verify Payment
 const verify_payment = async (req, res) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, bookId } = req.body;
 
   try {
     // Generate the expected signature to verify the authenticity of the payment
@@ -57,8 +59,18 @@ const verify_payment = async (req, res) => {
 
       // Create purchase record for the user
       const user = req.user;
-      user.purchasedBooks.push(req.body.bookId);
+      user.purchasedBooks.push(bookId);
       await user.save(); // Save the updated user details
+
+      // Credit the book owner's wallet
+      const book = await Books.findById(bookId);
+      if (book && book.owner) {
+        const owner = await User.findById(book.owner);
+        if (owner) {
+          owner.wallet += book.price;
+          await owner.save();
+        }
+      }
 
       // Send success response to the client
       res.status(200).json({ message: 'Payment Verified Successfully' });

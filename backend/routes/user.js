@@ -1,5 +1,5 @@
 const express = require('express')
-const { loginUser, signupUser, getUser, updateUser, generateOTP, verifyOTP, getUserPurchases } = require('../controller/userController')
+const { loginUser, signupUser, getUser, updateUser, generateOTP, verifyOTP, getUserPurchases, getUserWallet, getWalletHistory } = require('../controller/userController')
 const requireAuth  = require('../middleware/requireAuth')
 const router = express.Router()
 
@@ -23,6 +23,12 @@ router.get('/details', getUser )
 
 // get user's purchased books
 router.get('/purchases', getUserPurchases )
+
+// get user's wallet balance
+router.get('/wallet', getUserWallet)
+
+// get user's wallet history
+router.get('/wallet/history', getWalletHistory)
 
 // update user details
 router.patch('/update', updateUser )

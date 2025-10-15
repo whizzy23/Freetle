@@ -133,3 +133,21 @@
   background-color: #4444dd;
   color: white;
 }
+
+/* wallet-balance-card */
+.wallet-balance-card {
+  max-width: 350px;
+  margin: 0 auto;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* earn-card */
+.earn-card {
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}

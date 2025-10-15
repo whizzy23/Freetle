@@ -11,6 +11,7 @@ import StoryPage from "./pages/StoryPage";
 import Purchases from "./pages/Purchases";
 import NotFound from "./pages/NotFound";
 import Books from "./pages/Books";
+import Wallet from "./pages/Wallet";
 import { BrowserRouter , Routes , Route , Navigate } from "react-router-dom";
 import { useAuthContext } from "./hooks/useAuthContext";
 import "./custom.css"
@@ -39,6 +40,7 @@ function App() {
           <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/" />} />
           <Route path="/purchases" element={isLoading ? loadingElement : user ? <Purchases /> : <Navigate to="/signup" />} />
           <Route path="/books" element={isLoading ? loadingElement : user ? <Books /> : <Navigate to="/signup" />} />
+          <Route path="/wallet" element={isLoading ? loadingElement : user ? <Wallet /> : <Navigate to="/signup" />} />
           <Route path="*" element={isLoading ? loadingElement : user ? <NotFound /> : <Navigate to="/signup" />} />
         </Routes>
       </div>

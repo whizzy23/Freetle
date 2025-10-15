@@ -51,6 +51,7 @@ const Navigation = () => {
               <NavDropdown.Item as={NavLink} to="/books/">My Books</NavDropdown.Item>
               <NavDropdown.Item as={NavLink} to="/purchase">Purchase e-Book</NavDropdown.Item>
               <NavDropdown.Item as={NavLink} to="/purchases">Purchased Books</NavDropdown.Item>
+              <NavDropdown.Item as={NavLink} to="/wallet">Wallet</NavDropdown.Item>
               <NavDropdown.Item as={NavLink} to="/bookmarks">Bookmarks</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item as={NavLink} to="signup" onClick={handleLogout}>Log out</NavDropdown.Item>
