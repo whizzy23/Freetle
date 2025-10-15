@@ -44,7 +44,7 @@ const PublishedStories = () => {
 
   return (
     <Container className='mb-5'>
-      <h1 className="text-center mt-5">Your Published Stories</h1>
+      <h1 className="text-center mt-5">My Publications</h1>
       <div className="d-flex justify-content-end mb-4">
         <StoryForm userData={userData} />
       </div>

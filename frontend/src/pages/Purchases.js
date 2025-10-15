@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import BookCard from "../components/bookCard";
 
 const Purchases = () => {
   const [books, setBooks] = useState([]);
   const { user } = useAuthContext();
   const [purchasedBooks, setPurchasedBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPurchases = async () => {
@@ -23,7 +21,7 @@ const Purchases = () => {
         if (!res.ok) throw new Error(data.error || "Failed to fetch purchases");
         setPurchasedBooks(data.purchasedBooks || []);
       } catch (err) {
-        setError(err.message);
+        console.error("Error fetching purchases:", err.message);
       } finally {
         setLoading(false);
       }
@@ -31,14 +29,15 @@ const Purchases = () => {
     const fetchBooks = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/books`,
+          `${process.env.REACT_APP_API_URL}/api/books/`,
           {
             headers: { Authorization: `Bearer ${user.token}` },
           }
         );
         const json = await response.json();
         if (!response.ok) throw new Error(json.error);
-        setBooks(json.books || []);
+        setBooks(json || []);
+        console.log(json);
       } catch (error) {
         console.error("Error fetching books:", error.message);
       }
@@ -59,24 +58,12 @@ const Purchases = () => {
       ) : (
         <div className="row">
           {purchasedBooks.map((bookId) => {
-            const book = books.find((b) => b.id === bookId);
-            return (
+            const book = books.find((b) => (b._id || b.id) === bookId);
+            return book ? (
               <div className="col-md-4 mb-3" key={bookId}>
-                <Card className="p-3 story-cards">
-                  <Card.Title>{book ? book.title : bookId}</Card.Title>
-                  {book && book.src && (
-                    <Link
-                      to={book.src}
-                      className="btn download-btn mt-2"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download
-                    </Link>
-                  )}
-                </Card>
+                <BookCard book={book} />
               </div>
-            );
+            ) : null;
           })}
         </div>
       )}

@@ -7,6 +7,7 @@ import { BookmarkContextProvider } from './context/BookmarkContext';
 import { StoriesContextProvider } from './context/StoriesContext';
 import { AuthContextProvider } from './context/AuthContext';
 import { UserContextProvider } from './context/UserContext';
+import { BooksContextProvider } from './context/BooksContext';
 import { CommentContextProvider } from './context/commentContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -19,7 +20,9 @@ root.render(
         <BookmarkContextProvider>
           <CommentContextProvider>
             <StoriesContextProvider>
-              <App />
+              <BooksContextProvider>
+                <App />
+              </BooksContextProvider>
               <ToastContainer position="bottom-center" autoClose={500} hideProgressBar newestOnTop closeOnClick
               rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover theme="dark" />
             </StoriesContextProvider>

@@ -1,214 +1,231 @@
-import { useState, useEffect } from 'react';
-import { Form, Button, Card } from 'react-bootstrap';
-import { useUserContext } from '../hooks/useUserContext';
-import { useAuthContext } from '../hooks/useAuthContext';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { toast } from 'react-toastify';
+import { useState, useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Spinner,
+  Badge,
+} from "react-bootstrap";
+import { useUserContext } from "../hooks/useUserContext";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { toast } from "react-toastify";
+import noCoverImage from "../assets/no-image.jpg";
 
 const PurchasePage = () => {
-  const { userData , dispatchUser } = useUserContext();
+  const { userData, dispatchUser } = useUserContext();
   const { user } = useAuthContext();
+
   const [books, setBooks] = useState([]);
+  const [isFetchingBooks, setIsFetchingBooks] = useState(true);
+  const [loadingBookId, setLoadingBookId] = useState(null);
+
   const purchasedBooks = userData?.purchasedBooks || [];
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [selectedBook, setSelectedBook] = useState('');
-  const [captchaVerified, setCaptchaVerified] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
-  // Handle Payment Function
-  const handlePayment = async () => {
-    if (!captchaVerified) {
-      toast.error('Please verify the CAPTCHA');
+  // Helper to compare IDs
+  const sameId = (a, b) => String(a || "") === String(b || "");
+
+  // Fetch user details & books
+  useEffect(() => {
+    if (!user?.token) {
+      setBooks([]);
+      setIsFetchingBooks(false);
       return;
     }
 
-    if (!selectedBook) {
-      toast.error('Please select a book to purchase');
-      return;
-    }
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/user/details`,
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }
+        );
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error);
+        dispatchUser({ type: "SET_USER", payload: json });
+        setName(json.name || "");
+        setEmail(json.email || "");
+      } catch (err) {
+        toast.error("Failed to load user data");
+      }
+    };
 
-    setLoading(true);
-    const selectedBookData = books.find(book => book.id === selectedBook);
+    const fetchBooks = async () => {
+      setIsFetchingBooks(true);
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/books/available`,
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }
+        );
+        const json = await res.json();
+        if (res.ok) setBooks(json.filter((b) => b.available !== false));
+      } catch (error) {
+        toast.error("Could not load books");
+      } finally {
+        setIsFetchingBooks(false);
+      }
+    };
 
+    fetchUserData();
+    fetchBooks();
+  }, [user, dispatchUser]);
+
+  // Payment handling
+  const handlePayment = async (bookId) => {
+    const book = books.find((b) => sameId(b._id, bookId));
+    if (!book) return toast.error("Book not found");
+
+    setLoadingBookId(bookId);
     try {
-      // Create an order in the backend
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/payment/createOrder`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`,
-        },
-        body: JSON.stringify({
-          amount: selectedBookData.price,
-        }),
-      });
-
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/payment/createOrder`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: JSON.stringify({ amount: book.price }),
+        }
+      );
       const data = await res.json();
-      handlePaymentVerify(data.data);
-    } catch (error) {
-      console.error('Payment Error:', error.message);
-      toast.error('Payment could not be processed. Please try again later.');
-    } finally {
-      setLoading(false);
+      if (!res.ok) throw new Error(data.error);
+      handlePaymentVerify(data.data, bookId);
+    } catch {
+      toast.error("Payment could not be processed.");
+      setLoadingBookId(null);
     }
   };
 
-  // Handle Payment Verification
-  const handlePaymentVerify = (data) => {
-    const options = {
+  const handlePaymentVerify = (orderData, bookId) => {
+    const book = books.find((b) => sameId(b._id, bookId));
+    const rzp = new window.Razorpay({
       key: process.env.REACT_APP_RAZORPAY_KEY_ID,
-      amount: data.amount,
-      currency: 'INR',
-      name: 'E-Book Purchase',
-      description: `Purchasing ${books.find(book => book.id === selectedBook).title}`,
-      order_id: data.id,
-      prefill: {
-        name: name,
-        email: email,
-      },
+      amount: orderData.amount,
+      currency: "INR",
+      name: "E-Book Purchase",
+      description: `Purchasing ${book?.title || ""}`,
+      order_id: orderData.id,
+      prefill: { name, email },
       handler: async (response) => {
         try {
-          const verifyRes = await fetch(`${process.env.REACT_APP_API_URL}/api/payment/verifyPayment`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${user.token}`,
-            },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              bookId: selectedBook,
-            }),
-          });
-
+          const verifyRes = await fetch(
+            `${process.env.REACT_APP_API_URL}/api/payment/verifyPayment`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${user.token}`,
+              },
+              body: JSON.stringify({ ...response, bookId }),
+            }
+          );
           const verifyData = await verifyRes.json();
           if (verifyData.message) {
-            toast.success('Payment successful!');
-            dispatchUser({ type: 'UPDATE_PURCHASES', payload: selectedBook });
-          } else {
-            toast.error('Payment verification failed');
-          }
-        } catch (error) {
-          console.error('Verification Error:', error.message);
-          toast.error('Payment verification failed');
+            toast.success("Payment successful!");
+            dispatchUser({ type: "UPDATE_PURCHASES", payload: bookId });
+          } else toast.error("Payment verification failed");
+        } finally {
+          setLoadingBookId(null);
         }
       },
-      theme: {
-        color: '#5f63b8',
-      },
-    };
+      modal: { ondismiss: () => setLoadingBookId(null) },
+      theme: { color: "#5f63b8" },
+    });
 
-    const rzp1 = new window.Razorpay(options);
-    rzp1.open();
+    rzp.open();
   };
-
-  // CAPTCHA Change Handler
-  const onCaptchaChange = (value) => {
-    if (value) {
-        setCaptchaVerified(true);
-    }
-  };
-
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/details`, {
-          headers: { 'Authorization': `Bearer ${user.token}` },
-        });
-        const json = await response.json();
-        if (!response.ok) throw new Error(json.error);
-        dispatchUser({ type: 'SET_USER', payload: json });
-      }
-      catch (error) {
-        console.error('Error fetching user data:', error.message);
-      }
-    };
-    const fetchBooks = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/books`, {
-          headers: { 'Authorization': `Bearer ${user.token}` },
-        });
-        const json = await response.json();
-        if (!response.ok) throw new Error(json.error);
-        setBooks(json.books || []);
-      } catch (error) {
-        console.error('Error fetching books:', error.message);
-      }
-    };
-    if (user) {
-      fetchUserDetails();
-      fetchBooks();
-    }
-  }, [dispatchUser, user]);
 
   return (
-    <div className="container mt-5">
-      <Card className="p-4 shadow-sm">
-        <h2 className="mb-3">Purchase E-Book</h2>
-        <Form>
-          <Form.Group controlId="name" className="mb-3">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder={'Enter your name'}
-              value={userData.name}
-              readOnly
-            />
-          </Form.Group>
+    <Container className="mt-5">
+      <h2 className="mb-4 text-center fw-bold">Buy E-Book</h2>
 
-          <Form.Group controlId="email" className="mb-3">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Enter your email"
-              value={userData.email}
-              readOnly
-            />
-          </Form.Group>
+      {!user ? (
+        <div className="alert alert-warning text-center">
+          Please log in to purchase books.
+        </div>
+      ) : isFetchingBooks ? (
+        <div className="text-center py-5">
+          <Spinner animation="border" />
+        </div>
+      ) : books.length === 0 ? (
+        <div className="text-center py-5">No books available.</div>
+      ) : (
+        <Row xs={1} md={2} lg={3} className="g-4">
+          {books.map((book) => {
+            const id = book._id;
+            const already = purchasedBooks.some((p) => sameId(p, id));
+            const processing = sameId(loadingBookId, id);
 
-          <Form.Group controlId="book" className="mb-3">
-            <Form.Label>Select a Book</Form.Label>
-            <Form.Control
-              as="select"
-              value={selectedBook}
-              onChange={(e) => setSelectedBook(e.target.value)}
-              required
-            >
-              <option value="">Select a book</option>
-              {books.map(book => (
-                <option
-                  key={book.id}
-                  value={book.id}
-                  disabled={purchasedBooks.includes(book.id)}
-                  style={purchasedBooks.includes(book.id) ? { color: 'red' } : {}}
+            return (
+              <Col key={id} className="mb-4">
+                <Card
+                  className="rounded-4 shadow-sm d-flex flex-column"
+                  style={{ height: 500, width: "100%" }}
                 >
-                  {book.title} - ₹{book.price}
-                  {purchasedBooks.includes(book.id) ? ' (Already purchased)' : ''}
-                </option>
-              ))}
-            </Form.Control>
-          </Form.Group>
+                  <div style={{ height: "45%", overflow: "hidden" }}>
+                    <Card.Img
+                      variant="top"
+                      src={book.coverImage.url || noCoverImage}
+                      alt={book.title}
+                      className="w-100 h-100 rounded-top-4"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
 
-          {/* reCAPTCHA */}
-          <ReCAPTCHA
-            sitekey={process.env.REACT_APP_RECAPTCHA_KEY}
-            onChange={onCaptchaChange}
-            className='py-2'
-          />
+                  <Card.Body className="d-flex flex-column">
+                    <div className="d-flex justify-content-between align-items-start mb-2">
+                      <Card.Title className="text-truncate">
+                        {book.title}
+                      </Card.Title>
+                      <Badge bg="light" text="dark" className="border">
+                        ₹{book.price}
+                      </Badge>
+                    </div>
 
-          <Button
-            variant="dark"
-            className="mt-3"
-            disabled={loading || !captchaVerified || !selectedBook || purchasedBooks.includes(selectedBook)}
-            onClick={handlePayment}
-          >
-            {loading ? 'Processing...' : `Pay ₹${selectedBook ? books.find(b => b.id === selectedBook)?.price : '...'}`}
-          </Button>
-        </Form>
-      </Card>
-    </div>
+                    <Card.Text
+                      className="text-muted"
+                      style={{
+                        fontSize: "0.9rem",
+                        flexGrow: 1,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                      }}
+                    >
+                      {book.description || "No description available."}
+                    </Card.Text>
+
+                    <Button
+                      variant={already ? "outline-secondary" : "dark"}
+                      className="mt-auto"
+                      disabled={already || processing}
+                      onClick={() => handlePayment(id)}
+                    >
+                      {processing ? (
+                        <Spinner animation="border" size="sm" />
+                      ) : already ? (
+                        "Purchased"
+                      ) : (
+                        "Buy Now"
+                      )}
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            );
+          })}
+        </Row>
+      )}
+    </Container>
   );
 };
 
