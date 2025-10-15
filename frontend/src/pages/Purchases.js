@@ -1,6 +1,29 @@
 import { useEffect, useState } from "react";
+import { Container, Row, Col, Spinner, Alert } from "react-bootstrap";
 import { useAuthContext } from "../hooks/useAuthContext";
 import BookCard from "../components/bookCard";
+
+const PurchasesList = ({ books, purchasedBooks }) => {
+  if (!purchasedBooks?.length) {
+    return (
+      <Alert variant="info" className="text-center">
+        You have not purchased any books yet.
+      </Alert>
+    );
+  }
+  return (
+    <Row xs={1} md={2} lg={3} className="g-4">
+      {purchasedBooks.map((bookId) => {
+        const book = books.find((b) => (b._id || b.id) === bookId);
+        return book ? (
+          <Col key={bookId}>
+            <BookCard book={book} />
+          </Col>
+        ) : null;
+      })}
+    </Row>
+  );
+};
 
 const Purchases = () => {
   const [books, setBooks] = useState([]);
@@ -37,7 +60,6 @@ const Purchases = () => {
         const json = await response.json();
         if (!response.ok) throw new Error(json.error);
         setBooks(json || []);
-        console.log(json);
       } catch (error) {
         console.error("Error fetching books:", error.message);
       }
@@ -48,26 +70,17 @@ const Purchases = () => {
     }
   }, [user]);
 
-  if (loading) return null;
-
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4">Purchased Books</h2>
-      {purchasedBooks.length === 0 ? (
-        <div>You have not purchased any books yet.</div>
-      ) : (
-        <div className="row">
-          {purchasedBooks.map((bookId) => {
-            const book = books.find((b) => (b._id || b.id) === bookId);
-            return book ? (
-              <div className="col-md-4 mb-3" key={bookId}>
-                <BookCard book={book} />
-              </div>
-            ) : null;
-          })}
+    <Container className="mb-5">
+      <h1 className="text-center my-5">Purchased Books</h1>
+      {loading ? (
+        <div className="text-center py-5">
+          <Spinner animation="border" />
         </div>
+      ) : (
+        <PurchasesList books={books} purchasedBooks={purchasedBooks} />
       )}
-    </div>
+    </Container>
   );
 };
 

@@ -2,14 +2,13 @@ import { useState, useEffect } from "react";
 import { Card, Button, Badge, Spinner } from "react-bootstrap";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useBooksContext } from "../hooks/useBooksContext";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import noCoverImage from "../assets/no-image.jpg";
 
 const BookCard = ({ book }) => {
   const { user } = useAuthContext();
   const { dispatchBook } = useBooksContext();
   const { _id, title, description, price, available, coverImage, owner } = book;
-  console.log(book);
   const [downloading, setDownloading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -95,25 +94,18 @@ const BookCard = ({ book }) => {
   };
 
   return (
-    <Card className="h-100 rounded-3 shadow-sm d-flex flex-column">
+    <Card
+      className="rounded-4 shadow-sm d-flex flex-column"
+      style={{ height: 500, width: "100%" }}
+    >
       {/* Image Section */}
-      <div
-        className="d-flex justify-content-center align-items-center overflow-hidden bg-light"
-        style={{
-          height: 200,
-          borderTopLeftRadius: "12px",
-          borderTopRightRadius: "12px",
-        }}
-      >
+      <div style={{ height: "45%", overflow: "hidden" }}>
         <Card.Img
+          variant="top"
           src={coverImage?.url || noCoverImage}
           alt={title}
-          style={{
-            objectFit: "cover",
-            width: "70%",
-            height: "100%",
-            borderRadius: "8px",
-          }}
+          className="w-100 h-100 rounded-top-4"
+          style={{ objectFit: "cover" }}
         />
       </div>
 
@@ -140,10 +132,12 @@ const BookCard = ({ book }) => {
           style={{
             fontSize: "0.9rem",
             flexGrow: 1,
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
             overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxHeight: "6em",
+            display: "-webkit-box",
+            WebkitLineClamp: 4,
+            WebkitBoxOrient: "vertical",
           }}
         >
           {description || "No description available."}
