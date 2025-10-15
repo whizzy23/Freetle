@@ -148,7 +148,7 @@ const PurchasePage = () => {
 
       {/* Payment Test Info Strip */}
       <div className="bg-warning bg-opacity-25 text-dark text-center py-1 mb-4 small border rounded-2" style={{letterSpacing: '0.5px'}}>
-        <strong>Test Payment:</strong> Use card <b>4012 8888 8888 1881</b>, any random CVV, any future date, and any 4-6 digit OTP.
+        <strong>Test Payment:</strong> Use card <b>4386 2894 0766 0153</b>, any random CVV, any future date, and any 4-6 digit OTP.
       </div>
 
       {!user ? (
